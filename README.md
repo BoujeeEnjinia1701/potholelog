@@ -1,0 +1,75 @@
+# PotholeLog
+
+**Area:** Smart Cities · **Status:** Concept · **Prototype budget:** about $70 USD · **Difficulty:** 2 of 5
+
+A vehicle-mounted road roughness logger for buses, garbage trucks or bikes that records vibration with location to map potholes and rough roads as the fleet drives its routes.
+
+## Concept rationale
+
+Fleets already cover the network every week; a small sensor turns routine trips into a road survey.
+
+## Burning platform
+
+Road maintenance backlogs are large in many cities, and poor roads damage vehicles and endanger cyclists.
+
+## Where it could be used
+
+### By industry
+
+| Industry | Use |
+| --- | --- |
+| _To be developed_ | |
+
+### By country or region
+
+| Country or region | Why it matters there |
+| --- | --- |
+| _To be developed_ | |
+
+## What sparked the idea
+
+It came out of a September 2026 review of Design Molecule's applied research areas against the open projects already in the lab.
+
+## Problem
+
+Road surveys are expensive and infrequent, so repairs follow complaints rather than condition.
+
+## Concept
+
+A vehicle-mounted road roughness logger for buses, garbage trucks or bikes that records vibration with location to map potholes and rough roads as the fleet drives its routes.
+
+Full design precis: [docs/02-concept.md](docs/02-concept.md)
+
+## Key components
+
+- Accelerometer and GNSS module
+- Microcontroller with storage and cellular upload
+- Vehicle power adapter
+- Rugged mount
+
+The working bill of materials is in [bom/bom.csv](bom/bom.csv).
+
+## Safety
+
+> Mount securely so nothing can detach in traffic, and never interact with the device while driving.
+
+## Repository layout
+
+| Folder | Contents |
+| --- | --- |
+| `docs/` | Problem, concept, requirements, calculations and design decisions |
+| `cad/src/` | build123d Python source, the source of truth for all geometry |
+| `cad/step/`, `cad/stl/` | Exported models for FreeCAD, other CAD tools and printing |
+| `cad/drawings/` | 2D sketches and dimensioned drawings |
+| `bom/` | Bill of materials |
+| `electronics/` | KiCad schematics and PCB layouts |
+| `firmware/` | Microcontroller code |
+| `media/` | Renders, perspectives and photos |
+| `build-log/` | Dated prototyping notes |
+
+## Licenses
+
+- **Hardware** (CAD, drawings, BOM, electronics): [CERN-OHL-S v2](LICENSE)
+- **Software** (firmware, scripts, notebooks): [MIT](LICENSE-SOFTWARE)
+
+A project of the [Design Molecule](https://designmolecule.com) lab. Smart cities set.

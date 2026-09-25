@@ -1,0 +1,17 @@
+# Card metadata consumed by https://designmolecule.com
+name: PotholeLog
+slug: potholelog
+area: Smart Cities
+status: concept          # concept | design | prototype | tested | released
+shortlisted: false
+pitch: >-
+  A vehicle-mounted road roughness logger for buses, garbage trucks or bikes that records vibration with location to map potholes and rough roads as the fleet drives its routes.
+problem: >-
+  Road surveys are expensive and infrequent, so repairs follow complaints rather than condition.
+budget_usd: 70
+difficulty: 2  # 1 easiest, 5 hardest
+hero_image: media/hero.png
+licenses:
+  hardware: CERN-OHL-S-2.0
+  software: MIT
+tags: [smart-cities, open-hardware, cern-ohl-s]
