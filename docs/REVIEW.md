@@ -37,6 +37,8 @@ Requirements not met or at risk:
 
 ### Proposed, awaiting Amish
 
+Update 2026-09-25: items 1 to 7 are now "Decided by Amish, 2026-09-25: go with recommendation" (PHL-DDR-001, PHL-DDR-002). Item 8 stays "Proposed, awaiting Amish".
+
 1. **Bicycles in the pitch.** Options: (a) keep the pitch and treat a bicycle variant (own battery, handlebar or seat-post mount) as a later step; (b) drop bikes from the pitch; (c) design both now. Recommendation: (a). `project.yaml` is unchanged.
 2. **Upload route.** Options: depot Wi-Fi (in budget, next-day data) or LTE-M cellular (about $20 to $30 more per unit plus a data plan, same-day data, over budget). Recommendation: depot Wi-Fi first, with cellular as an optional add-on costed separately. No budget change is proposed.
 3. **Mount location.** Sprung-mass floor mount above the rear axle (recommended) or an axle mount (stronger signal, harsher environment).
@@ -102,9 +104,11 @@ Key numbers: 5.23 kB/s raw; 0.37 kg (0.51 kg with lead and fixings); load change
 
 ### Decisions recorded (PHL-DDR-001)
 
-Adopted as recommended for TRL 3 under Amish's 2026-09-25 instruction, open for his review: D1 keep the pitch and treat bicycles as a later variant (R16 redefined to buses and refuse trucks for this build); D2 depot Wi-Fi first, cellular as a separately costed add-on; D3 floor mount above the rear axle; D4 ESP32-S3; D5 LSM6DSO-class IMU and M10-class GNSS; D6 100 m segments and point events in CSV and GeoJSON after the CityTwin export; D7 publish road-level results only, no driver scoring. No new budget and no pitch or problem rewording were recommended, so `budget_usd` stays at $70 and the pitch still names bikes.
+Decided by Amish, 2026-09-25: go with recommendation (previously adopted as recommended for TRL 3, open for his review): D1 keep the pitch and treat bicycles as a later variant (R16 redefined to buses and refuse trucks for this build); D2 depot Wi-Fi first, cellular as a separately costed add-on; D3 floor mount above the rear axle; D4 ESP32-S3; D5 LSM6DSO-class IMU and M10-class GNSS; D6 100 m segments and point events in CSV and GeoJSON after the CityTwin export; D7 publish road-level results only, no driver scoring. No new budget and no pitch or problem rewording were recommended, so `budget_usd` stays at $70 and the pitch still names bikes.
 
 ### Still awaiting Amish
+
+Update 2026-09-25: items 2 and 3 are now "Decided by Amish, 2026-09-25: go with recommendation" (PHL-DDR-002, N1 and N2). Item 1 stays "Proposed, awaiting Amish".
 
 1. **O1, first pilot partner and city.** No partner, city or preference was named at TRL 2; none is chosen here.
 2. **New, converter input for 24 V vehicles (R9).** Options: (a) a 60 V-rated converter, about $2 more, $71.00 in parts, $1 over budget; (b) keep the 36 V part and limit the build to 12 V vehicles, which excludes most buses; (c) add a surge-stopper front end, more robust and more costly. Recommendation: (a), with `budget_usd` raised to about $75 to restore a small margin. Not applied: the BOM still carries the 36 V part and `budget_usd` is unchanged at $70.
@@ -137,3 +141,66 @@ Suggestions only, not in the repo: map matching to street centerlines for R4 in 
 ### Recommended next step
 
 TRL 4 is on hold by Amish's instruction; this repo stops at TRL 3. Amish's review is needed on items 1 to 3 above and on D1 to D7. For the record only, TRL 4 would need: a bench build of the logger; a lab test report (TST, `environment: lab`) covering IMU noise and timing against PPS, power and hold-up with power cuts, and ISO 16750-2 transients on the chosen converter; and build log entries. Drive data over surveyed defects and reference IRI sections would follow at TRL 5. None of this has been started.
+
+## Session 2026-09-25: recommendations accepted
+
+Amish wrote on 2026-09-25, in chat: "i accept all your recommendations, go with them across all repos." This session applied that decision at TRL 3 and recorded it in `docs/decisions/0002-recommendations-accepted.md` (PHL-DDR-002 v0.1).
+
+### Decisions applied
+
+Nine items are now "Decided by Amish, 2026-09-25: go with recommendation".
+
+| # | Decision | Before | After |
+| --- | --- | --- | --- |
+| D1 to D7 | Bicycles later, depot Wi-Fi, floor mount, ESP32-S3, LSM6DSO and M10 classes, 100 m segments in CSV and GeoJSON, privacy rule | Adopted as recommended for TRL 3, open for review | Decided; wording updated in PHL-DDR-001 v0.2, PHL-PRB-001, PHL-PRC-001, `bom/bom.csv`, `bom/bom-notes.md` and `README.md` |
+| N1 | 60 V-rated converter; budget raised | 9 to 36 V converter, $7.00; parts $69.00; `budget_usd` $70; R9 not met | 9 to 60 V converter, $9.00; parts $71.00; `budget_usd` $75 (margin $4.00); R9 at risk (1.9 V over the 58.1 V TVS clamp; TVS pulse energy untested) |
+| N2 | R5 defect-detection range restated, 300 mm reference kept | 10 to 80 km/h; not met (margin 0.30 at 80 km/h on IRI 4) | 10 to 30 km/h with repeat slow passes; at risk (lowest margin 1.94 on IRI 2, 0.97 at 30 km/h on IRI 4, 1.17 allowing 10 crossings per km) |
+
+What changed in the repo:
+
+- `project.yaml`: `budget_usd` 70 to 75; DDR-002 added to the TRL evidence. Pitch and problem unchanged (no rewording was recommended). `trl: 3` and `trl_target: 3` unchanged.
+- `bom/bom.csv` item 4 and `bom/bom-notes.md`: 60 V converter, $71.00 total.
+- `docs/03-requirements.md` (PHL-REQ-001 v0.4): R5 target and status, R9 status, R15 target ($75) and status.
+- `docs/04-calcs/sizing.py` and `01-sizing.md` (PHL-CAL-001 v0.2): converter rating 60 V in F4 and F5, cost in J1 and J2, new line K2 for the 10 to 30 km/h band; Table 5 and the summary updated. The script was re-run and the note matches its output.
+- `docs/02-concept.md` (PHL-PRC-001 v0.4), `docs/01-problem.md` (PHL-PRB-001 v0.4): decisions, converter, detection band, budget and safety text.
+- `cad/src/model.py`: converter comment only (same 40 x 30 x 14 mm envelope); STEP and STL re-exported.
+- `cad/drawings/PHL-DWG-001`: supply note now states the 60 V converter; Rev P1 to P2.
+- `cad/src/concept_media.py`: blueprint key figures ($71 of $75, 60 V-rated input); all media re-rendered and inspected; `media/_views*` removed.
+- `README.md`: budget, concept numbers, components, safety, a new "What sparked the idea" (the 1982 International Road Roughness Experiment in Brasília, World Bank Technical Paper 45), and removal of the earlier text about how the idea was assembled.
+- All PDFs in `docs/pdf/` rebuilt; generated files regenerated so that none shows the old personal domain.
+
+### Requirement status (PHL-CAL-001 v0.2)
+
+0 not met, 6 at risk, 2 not verifiable at TRL 3, 4 met on paper, 4 met by design (before: 2 not met, 4 at risk).
+
+| ID | Status | Key number |
+| --- | --- | --- |
+| R5 Speed range | At risk | Defect band 10 to 30 km/h: margin 0.97 at 30 km/h on IRI 4 |
+| R9 Vehicle power | At risk | 60 V converter against 58 V load dump and 58.1 V TVS clamp; TVS energy untested |
+| R1 Detection | At risk | Margin above 1 up to about 20 km/h (IRI 4) and 50 km/h (IRI 2) |
+| R4 Location | At risk | 18.2 m in dense urban streets (10 passes) |
+| R11 Environment | At risk | About 72 °C inside at +70 °C |
+| R12 Installation | At risk | 30 min at the limit |
+| R2, R3 | Not verifiable at TRL 3 | Synthetic r² 0.93 (one pass), 0.99 (five) |
+| R7, R8, R10, R15 | Met on paper | 133 to 160 days; 112 kB in 8 s; 7.0 s hold-up; $71.00 of $75 |
+| R6, R13, R14, R16 | Met by design | 400 Hz, ±16 g; privacy rule; CSV and GeoJSON; buses and refuse trucks |
+
+### Still awaiting Amish
+
+1. **O1, first pilot partner and city, and who provides reference IRI.** No recommendation was made, so no choice is made here.
+
+Suggestions only, unchanged and not decisions: map matching for R4, a load flag for steel-sprung refuse trucks, and the gyroscope roll rate as a second detection channel.
+
+### Cross-repo actions
+
+- **CityTwin:** agree the ingest path for PotholeLog's daily segment files (CityTwin fetches from the operator's server, or the operator passes them on), and confirm that a daily publication date is compatible with PotholeLog R13. Not edited from this repo.
+
+### Safety
+
+- The 60 V converter clears the 24 V load dump by only 1.9 V over the TVS clamp, and the TVS pulse energy is untested; converters rated below 60 V must not be fitted to 24 V vehicles. The precis and README say so.
+- A clean map is still not proof of a sound road: small potholes are sought only on slow passes.
+- Other concerns are as in the TRL 3 session.
+
+### TRL 4
+
+TRL 4 remains on hold by Amish's instruction. Decided but on hold because they are TRL 4 work: a bench test of the converter and TVS against ISO 16750-2 load dump pulses (N1), and field data on slow-pass detection rates (N2). No build, test, firmware, PCB or purchasing work was started.

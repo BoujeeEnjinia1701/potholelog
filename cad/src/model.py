@@ -100,7 +100,7 @@ def build_parts(p=PARAMS):
     parts["lid"] = hollow(0, 0, z0 + p["base_h"] + p["lid_h"] / 2, bl, bw, p["lid_h"], t, open_top=False)
 
     fl = D["box_floor_z"]
-    # 4 DC-DC converter and protection board
+    # 4 DC-DC converter (9 to 60 V in, PHL-DDR-002) and protection board; same envelope as the 36 V module
     cx, cy = p["converter_xy"]; w, d, h = p["converter"]
     parts["converter"] = box(cx, cy, fl + h / 2, w, d, h)
     # 5 Hold-up supercapacitor (radial can, standing)

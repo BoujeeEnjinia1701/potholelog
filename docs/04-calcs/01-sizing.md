@@ -3,7 +3,7 @@ doc_id: PHL-CAL-001
 title: PotholeLog sizing calculations
 project: PotholeLog
 doc_type: Calculation
-version: "0.1"
+version: "0.2"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -13,17 +13,21 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: First issue for TRL 3 (vehicle and road model, roughness signal and calibration, pothole detection, location, storage and upload, power and transients, hold-up, environment, plate stiffness, installation, cost)
+- version: "0.2"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Recommendations accepted by Amish (DDR-002)
 ---
 
 # PotholeLog sizing calculations
 
-On paper, PotholeLog meets eight of its sixteen requirements (four by calculation, four by design), has four at risk, cannot show two at TRL 3 and misses two. The two misses are the most useful results of this note. First, a bus tyre largely bridges the R1 reference pothole (50 mm deep, 300 mm long), so a floor-mounted logger sees it clearly only at low speed: in the quarter-car model the impact stands above ordinary road vibration up to about 20 km/h on a fair road (IRI 4) and about 50 km/h on a good one (IRI 2), and not at 80 km/h. R5 (defect detection from 10 to 80 km/h) is therefore not met, and R1 is at risk. Second, the 9 to 36 V converter in the TRL 2 BOM is exceeded by a suppressed load dump on a 24 V vehicle, so the transient part of R9 is not met; a 60 V part would fix it but would take the parts cost to $71 against the $70 budget. The roughness function itself looks sound: the signal is 12 times the sensor noise at 20 km/h on a smooth road, and a synthetic calibration against IRI gives r² of 0.93 from one pass and 0.99 from five. Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [C2], is the line of that script's output that carries it.
+On paper, PotholeLog meets eight of its sixteen requirements (four by calculation, four by design), has six at risk, cannot show two at TRL 3 and misses none. Version 0.2 applies Amish's 2026-09-25 decisions (PHL-DDR-002). Version 0.1 found two misses. First, a bus tyre largely bridges the R1 reference pothole (50 mm deep, 300 mm long), so a floor-mounted logger sees it clearly only at low speed: in the quarter-car model the impact stands above ordinary road vibration up to about 20 km/h on a fair road (IRI 4) and about 50 km/h on a good one (IRI 2), and not at 80 km/h. R5's defect-detection range is now restated as 10 to 30 km/h, relying on repeat slow passes near stops and junctions; it is met on good roads and misses by a hair (margin 0.97) at 30 km/h on fair ones, so R5 moves from not met to at risk, and R1 stays at risk. Second, the 9 to 36 V converter was exceeded by a suppressed load dump on a 24 V vehicle. The BOM now carries a 60 V-rated converter, which clears the 58 V load dump and the 58.1 V TVS clamp by 1.9 V; the TVS pulse energy is unverified, so R9 moves from not met to at risk. The parts cost rises from $69.00 to $71.00 against a budget raised from $70 to $75. The roughness function itself looks sound: the signal is 12 times the sensor noise at 20 km/h on a smooth road, and a synthetic calibration against IRI gives r² of 0.93 from one pass and 0.99 from five. Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [C2], is the line of that script's output that carries it.
 
 > **Safety:** These are first-principles estimates for a paper proof of concept. They are not a survey method, an automotive electrical approval or a mounting approval. Outputs must not drive contract acceptance or safety decisions without validation against a calibrated reference. See PHL-PRC-001, Safety.
 
 ## Scope and method
 
-The note checks every requirement in PHL-REQ-001 v0.3 against the design in PHL-PRC-001 v0.3 and the parametric model `cad/src/model.py`. The script imports the model's `PARAMS`, derived dimensions and part volumes, so the plate, hole pattern, enclosure and masses used here are the ones in the STEP files and in drawing PHL-DWG-001. It also reads `bom/bom.csv` and `budget_usd` in `project.yaml`. Run it from the repo root with `python docs/04-calcs/sizing.py`.
+The note checks every requirement in PHL-REQ-001 v0.4 against the design in PHL-PRC-001 v0.4 and the parametric model `cad/src/model.py`. The script imports the model's `PARAMS`, derived dimensions and part volumes, so the plate, hole pattern, enclosure and masses used here are the ones in the STEP files and in drawing PHL-DWG-001. It also reads `bom/bom.csv` and `budget_usd` in `project.yaml`. Run it from the repo root with `python docs/04-calcs/sizing.py`.
 
 The vehicle is a linear quarter-car model of one side of a 12 m city bus's rear axle: sprung body, unsprung axle and twin tyres. Random road profiles follow the ISO 8608 spectral shape and are solved in the frequency domain; their IRI comes from the standard golden-car model at 80 km/h, following World Bank Technical Paper 46. A single pothole is enveloped by a rigid tyre circle and solved in the time domain. The logger reads the body's vertical acceleration at the floor centerline above the axle.
 
@@ -90,7 +94,7 @@ Margins below 1 (bold) mean the pothole is lost in ordinary road vibration.
 - **Relaxing the threshold does not rescue high speed.** Allowing 10 background crossings per km, which clustering over repeat passes could tolerate, raises the IRI 4 margins only to 1.17 at 30 km/h and 0.66 at 50 km/h [C2b]. A band-pass detector tuned to the wheel-hop band gave similar margins in a side check, so the limit is physical, not the choice of filter.
 - **Longer potholes are found at all speeds.** A 50 mm deep pothole 600 mm long lets the tyre reach the bottom and gives margins of 5.28 at 10 km/h, 2.63 at 50 km/h and 1.67 at 80 km/h on an IRI 4 road [C2c].
 - **Wheel path.** The twin tyres hit a 300 mm pothole centered in the wheel path on 93 % of passes, and on at least one of three passes 99.96 % of the time [C3]. The limit is detection per hit, not the chance of a hit.
-- **R1 is at risk and R5 is not met.** In urban service a bus often passes a spot at 20 km/h or less, near stops and junctions,, and R1 allows three passes, so R1 may still be met on streets with low speeds; it cannot be shown without field data. R5's defect-detection range of 10 to 80 km/h is not met for the reference pothole at 30 km/h and above on fair roads, or at 80 km/h on good ones. Options for Amish are in `docs/REVIEW.md`; the targets are unchanged here.
+- **R1 is at risk and R5 is not met.** In urban service a bus often passes a spot at 20 km/h or less, near stops and junctions, and R1 allows three passes, so R1 may still be met on streets with low speeds; it cannot be shown without field data. The original R5 defect-detection range of 10 to 80 km/h was not met for the reference pothole at 30 km/h and above on fair roads, or at 80 km/h on good ones. Under PHL-DDR-002 (N2) the range is restated as 10 to 30 km/h. Across that band the lowest margin is 1.94 on IRI 2 roads and 0.97 at 30 km/h on IRI 4 roads, or 1.17 allowing 10 background crossings per km [K2]. R5 is at risk rather than not met.
 - **Range and sampling (R6).** The floor peak is at most 0.14 g, far inside ±16 g. An axle mount would see about 9 g in this linear model, 65 times more, with water and stones [C4], which supports the floor mount (D3). Sampling at 400 Hz keeps 99 % or more of the floor peak; samples are 35 mm apart at 50 km/h and 56 mm at 80 km/h, giving 9 and 5 samples across the pothole [C5].
 - **Two axles.** The front and rear axle impacts arrive 0.72 s apart at 30 km/h and 0.43 s at 50 km/h [C6]. Pairing them confirms an event and fixes which axle hit it.
 - **R2 cannot be shown at TRL 3.** Joints, drain covers and speed bumps are not Gaussian roughness, and they are the likely false reports. Only a field check of reported clusters can verify R2.
@@ -118,7 +122,7 @@ Margins below 1 (bold) mean the pothole is lost in ordinary road vibration.
 ## F. Power and transients (R9)
 
 - **Running power.** The 3.3 V loads draw 91 mA, which is 0.45 W at 5 V through the board's linear regulator and 0.54 W from the vehicle [F1]: 45 mA at 12 V, 22 mA at 24 V and 59 mA at 9 V, well within the 2 A fuse [F2]. Uploading raises this to 1.42 W for about 8 s a day; a 10 h day uses 5.4 Wh [F3]. The running target of under 1 W is met; the brief upload peak exceeds it. With an ignition-switched feed there is no draw with the ignition off. The TRL 2 estimate of 0.7 W was conservative and is revised to 0.54 W.
-- **Transients.** Normal 12 V (9 to 16 V) and 24 V (18 to 32 V) supplies and the 12 V suppressed load dump (35 V) are within the 36 V converter input, but the 24 V suppressed load dump (58 V) is not [F4]. The SMBJ36A-class TVS clamps at up to 58.1 V, also above 36 V; a 60 V converter would clear the clamp by only 1.9 V [F5], and a TVS absorbing a load dump pulse lasting hundreds of milliseconds may overheat. **The transient part of R9 is not met** for 24 V vehicles, which include most buses and refuse trucks. The 60 V converter, about $2 more, is proposed in `docs/REVIEW.md`, awaiting Amish, because it breaks the budget; a surge-stopper front end would be the fuller fix.
+- **Transients.** Under PHL-DDR-002 (N1) the converter is rated 60 V (v0.1 used a 36 V part). Normal 12 V (9 to 16 V) and 24 V (18 to 32 V) supplies and both suppressed load dumps, 35 V on 12 V systems and 58 V on 24 V systems, are within the 60 V input [F4]. The SMBJ36A-class TVS clamps at up to 58.1 V, which the 60 V converter clears by 1.9 V [F5]. The TVS conducts during a 24 V load dump, and a pulse lasting hundreds of milliseconds may overheat it; only a bench test can show that it survives. **The transient part of R9 is at risk** for 24 V vehicles, rather than not met. A surge-stopper front end remains the fuller fix and was not chosen.
 
 ## G. Hold-up (R10)
 
@@ -139,7 +143,7 @@ Margins below 1 (bold) mean the pothole is lost in ordinary road vibration.
 
 ## J. Cost (R15)
 
-The BOM has 11 lines totaling $69.00 against the $70 `budget_usd`, a margin of $1.00 [J1]. **R15 is met on paper.** The 60 V converter would bring it to $71.00, and the LTE-M option to $89 to $99 [J2]; neither is in the BOM.
+The BOM has 11 lines totaling $71.00 against the $75 `budget_usd`, a margin of $4.00 [J1]. The 60 V converter added about $2 (from $69.00) and the budget was raised from $70 to $75 under PHL-DDR-002 (N1). **R15 is met on paper.** The LTE-M option would bring the cost to $91 to $101 [J2], over budget; it is not in the BOM.
 
 ## K. Results against every requirement
 
@@ -147,8 +151,8 @@ The BOM has 11 lines totaling $69.00 against the $70 `budget_usd`, a margin of $
 
 | ID | Requirement | Value | Target | Status |
 | --- | --- | --- | --- | --- |
-| R5 | Work across normal fleet speeds | Roughness signal 12 x noise at 20 km/h; defect margin 0.54 at 50 km/h and 0.30 at 80 km/h on IRI 4 [K1] | Roughness 20 to 80 km/h; defects 10 to 80 km/h | **Not met** (defect detection at 30 km/h and above on fair roads) |
-| R9 | Run from vehicle power | 0.54 W running, 1.42 W for 8 s uploading; 24 V suppressed load dump 58 V against a 36 V converter | 9 to 36 V, under 1 W, ISO 16750-2 transient levels | **Not met** (transients on 24 V vehicles) |
+| R5 | Work across normal fleet speeds | Roughness signal 12 x noise at 20 km/h; lowest defect margin in 10 to 30 km/h 1.94 on IRI 2 and 0.97 on IRI 4 [K2] | Roughness 20 to 80 km/h; defects 10 to 30 km/h (PHL-DDR-002, N2) | At risk (30 km/h on fair roads) |
+| R9 | Run from vehicle power | 0.54 W running, 1.42 W for 8 s uploading; 24 V suppressed load dump 58 V and TVS clamp 58.1 V against a 60 V converter [F4], [F5] | 9 to 36 V, under 1 W, ISO 16750-2 transient levels | At risk (1.9 V margin; TVS pulse energy unverified) |
 | R1 | Detect potholes | Margin above 1 up to 20 km/h on IRI 4 and 50 km/h on IRI 2; 93 % of passes hit | 80 % found within 3 passes | At risk; field data needed |
 | R4 | Locate defects | 95 % radius 2.3 m suburban, 18.2 m dense urban (10 passes) | 10 m, correct street | At risk |
 | R11 | Survive the vehicle environment | About 72 °C inside at +70 °C; crash factor 531 | -20 to +70 °C, IP65, no loosening | At risk (part grades; vibration unverifiable) |
@@ -158,13 +162,13 @@ The BOM has 11 lines totaling $69.00 against the $70 `budget_usd`, a margin of $
 | R7 | Store data on the vehicle | 133 to 160 days on 32 GB | 30 days | Met on paper |
 | R8 | Get data off the vehicle | 112 kB in 8.4 s with the ignition on in depot Wi-Fi | Within 24 h, no staff action | Met on paper (vehicles in daily service) |
 | R10 | Shut down cleanly | 7.0 s hold-up at end of life, 1 s needed | No corruption on power loss | Met on paper |
-| R15 | Low cost and buildable | $69.00 | $70 | Met on paper ($1 margin) |
+| R15 | Low cost and buildable | $71.00 | $75 (PHL-DDR-002, N1) | Met on paper ($4 margin) |
 | R6 | Sample fast enough | 400 Hz, ±16 g, 10 Hz GNSS; peak 0.14 g | 400 Hz, ±8 g, 5 Hz | Met by design |
 | R13 | Protect privacy | No camera or microphone; pass times kept by the operator only | Road-level data only | Met by design |
 | R14 | Open outputs | CSV and GeoJSON per the CityTwin export (D6) | Readable by CityTwin and GIS | Met by design (CityTwin ingest path still open) |
 | R16 | Fit the fleet types in this build | Buses and refuse trucks on 9 to 36 V power (D1) | Buses and refuse trucks; bicycles deferred | Met by design (bicycle variant deferred) |
 
-Counts: 2 not met, 4 at risk, 2 not verifiable at TRL 3, 4 met on paper, 4 met by design.
+Counts: 0 not met, 6 at risk, 2 not verifiable at TRL 3, 4 met on paper, 4 met by design (v0.1: 2 not met, 4 at risk).
 
 ## Checks against the TRL 2 figures
 
@@ -180,6 +184,6 @@ Counts: 2 not met, 4 at risk, 2 not verifiable at TRL 3, 4 met on paper, 4 met b
 | About 0.7 W, about 60 mA at 12 V | 0.54 W, 45 mA at 12 V [F1], [F2] | Precis updated |
 | About 9 s hold-up | 10.0 s new, 7.0 s at end of life [G1] | Precis updated |
 | About 0.4 kg | 0.37 kg; 0.51 kg with lead and fixings [H2] | Stands |
-| About $69 | $69.00 [J1] | Stands |
-| 9 to 36 V input covers 12 V and 24 V vehicles | Not for 24 V load dump [F4] | Flagged; proposed fix awaiting Amish |
-| Detection margin "thin at high speed" | Lost at 30 km/h and above (IRI 4) or 80 km/h (IRI 2) for the reference pothole [K1] | R5 marked not met; options in REVIEW.md |
+| About $69 | $71.00 with the 60 V converter [J1] | Updated under PHL-DDR-002 |
+| 9 to 36 V input covers 12 V and 24 V vehicles | Not for 24 V load dump with the 36 V part; within 60 V [F4] | 60 V converter decided (PHL-DDR-002, N1) |
+| Detection margin "thin at high speed" | Lost at 30 km/h and above (IRI 4) or 80 km/h (IRI 2) for the reference pothole [K1] | R5 range restated as 10 to 30 km/h (PHL-DDR-002, N2); at risk |

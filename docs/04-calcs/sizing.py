@@ -1,4 +1,4 @@
-"""PotholeLog sizing calculations, PHL-CAL-001 v0.1 (TRL 3).
+"""PotholeLog sizing calculations, PHL-CAL-001 v0.2 (TRL 3).
 
 Run from the repo root:  python docs/04-calcs/sizing.py
 Prints every number quoted in docs/04-calcs/01-sizing.md. Each line carries a tag such as
@@ -58,8 +58,9 @@ WANDER = 0.25                        # m, standard deviation of lateral wander a
 WHEELBASE = 6.0                      # m, 12 m city bus class
 FALSE_PER_KM = 1.0                   # allowed background threshold crossings per km, before clustering
 SPEEDS = [10, 20, 30, 50, 80]        # km/h
+DEFECT_BAND = (10, 30)               # km/h, R5 defect-detection range as restated under PHL-DDR-002 (N2)
 
-print("PotholeLog sizing, PHL-CAL-001 v0.1")
+print("PotholeLog sizing, PHL-CAL-001 v0.2")
 D = derived(P)
 print(f"Geometry from cad/src/model.py: plate {P['plate']} mm, holes {P['hole_pitch']} mm, box {P['box']} mm, "
       f"overall height {D['overall_h']:.0f} mm")
@@ -341,11 +342,12 @@ tag("F3", f"while uploading: {P_UP:.2f} W for about {t_up:.0f} s a day; daily en
 LEVELS = {"12 V system, normal": (9, 16), "24 V system, normal": (18, 32),
           "12 V, suppressed load dump (ISO 16750-2 test B, to confirm)": (35, 35),
           "24 V, suppressed load dump (ISO 16750-2 test B, to confirm)": (58, 58)}
-CONV_MAX, TVS_VC = 36.0, 58.1
+CONV_MAX, TVS_VC = 60.0, 58.1        # 60 V-rated converter per PHL-DDR-002 (N1); SMBJ36A-class TVS clamp
 for k_, (lo, hi) in LEVELS.items():
-    tag("F4", f"{k_}: {lo if lo == hi else f'{lo} to {hi}'} V against the 36 V converter input: {'within' if hi <= CONV_MAX else 'EXCEEDS'}")
-tag("F5", f"SMBJ36A-class TVS clamps at up to {TVS_VC} V at its rated pulse current, above the {CONV_MAX:.0f} V converter rating; "
-          f"a 60 V-rated converter would clear the clamp by {60 - TVS_VC:.1f} V")
+    tag("F4", f"{k_}: {lo if lo == hi else f'{lo} to {hi}'} V against the {CONV_MAX:.0f} V converter input: {'within' if hi <= CONV_MAX else 'EXCEEDS'}")
+tag("F5", f"SMBJ36A-class TVS clamps at up to {TVS_VC} V at its rated pulse current, above the 36 V rating of the TRL 3 v0.1 converter; "
+          f"the {CONV_MAX:.0f} V-rated converter clears the clamp by {CONV_MAX - TVS_VC:.1f} V; the TVS conducts during a 24 V load dump, "
+          f"so its pulse energy must be confirmed by bench test (TRL 4, on hold)")
 
 # ------------------------------------------------------------------ G. Hold-up (R10)
 print("\nG. Hold-up (R10)")
@@ -421,10 +423,13 @@ total = sum(float(r["unit_cost_usd"]) * float(r["qty"]) for r in bom)
 import yaml  # noqa: E402
 budget = float(yaml.safe_load((ROOT / "project.yaml").read_text())["budget_usd"])
 tag("J1", f"BOM {len(bom)} lines, ${total:.2f} against budget_usd ${budget:.0f}: margin ${budget - total:.2f}")
-tag("J2", f"a 60 V-rated converter (about $2 more) would give ${total + 2:.2f}; LTE-M option (about $20 to $30) would give "
-          f"${total + 20:.0f} to ${total + 30:.0f}")
+tag("J2", f"the 60 V-rated converter is in the BOM (about $2 more than the 36 V part, ${total - 2:.2f} before); LTE-M option (about $20 to $30) would give "
+          f"${total + 20:.0f} to ${total + 30:.0f}, over budget")
 
 # ------------------------------------------------------------------ K. Summary for the results table
 print("\nK. Summary")
 tag("K1", f"detection margin at IRI 2: " + ", ".join(f"{v} km/h {det[v][0]:.2f}" for v in SPEEDS) +
     f"; at IRI 4: " + ", ".join(f"{v} km/h {det[v][1]:.2f}" for v in SPEEDS))
+band_v = [v for v in SPEEDS if DEFECT_BAND[0] <= v <= DEFECT_BAND[1]]
+tag("K2", f"R5 defect band {DEFECT_BAND[0]} to {DEFECT_BAND[1]} km/h (PHL-DDR-002): lowest margin at IRI 2 {min(det[v][0] for v in band_v):.2f}, "
+          f"at IRI 4 {min(det[v][1] for v in band_v):.2f} (at {DEFECT_BAND[1]} km/h); {det10[DEFECT_BAND[1]]:.2f} at IRI 4 allowing 10 crossings per km")

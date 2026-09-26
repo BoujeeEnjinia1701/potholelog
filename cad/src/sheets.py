@@ -1,4 +1,4 @@
-"""PotholeLog general arrangement sheet PHL-DWG-001, Rev P1 (TRL 3).
+"""PotholeLog general arrangement sheet PHL-DWG-001, Rev P2 (TRL 3).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/PHL-DWG-001.svg, .pdf and .png from the parametric model in
@@ -99,10 +99,11 @@ def main():
     asm = assembly()
     views = safe_project_views(asm, work)
     bb = asm.bounding_box()
-    s = Sheet(project="PotholeLog", title="General arrangement", dwg_no=DWG, rev="P1",
+    s = Sheet(project="PotholeLog", title="General arrangement", dwg_no=DWG, rev="P2",
               author="Amish Chadha", date=DATE, scale=None, theme="technical",
               material="Al 5052 plate; stock IP65 box; bought-in parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
-              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC")])
+              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
+                         ("P2", "Supply note: 60 V converter (PHL-DDR-002)", DATE, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(s, views)
@@ -171,7 +172,7 @@ def main():
         "Plate first mode about 186 Hz on corner bolts (PHL-CAL-001)",
         "IMU screwed flat to the box floor; X axis forward",
         "GNSS under the plastic lid; keep metal off the lid",
-        "Supply 9 to 36 V, fused 2 A, ignition switched; 0.54 W",
+        "Supply 9 to 36 V, converter rated 60 V; fused 2 A, ignition switched; 0.54 W",
         "Third-angle; front view from -Y; X forward along the vehicle",
     ], x=276, y=158, width=146)
     out = s.save(ROOT / "cad" / "drawings" / DWG)
