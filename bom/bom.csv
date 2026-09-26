@@ -1,5 +1,12 @@
 item,qty,spec,supplier,unit_cost_usd,make_buy,notes
-Accelerometer and GNSS module,,,,,,
-Microcontroller with storage and cellular upload,,,,,,
-Vehicle power adapter,,,,,,
-Rugged mount,,,,,,
+1 Mounting plate,1,"160 x 110 x 4 mm aluminum 5052, 4 x M6 holes, deburred",Metal supplier or offcut,6.00,make,Indicative price; material and cutting
+2 Enclosure base,1,"Stock IP65 ABS or polycarbonate box, about 120 x 90 x 55 mm overall",Electronics distributor,8.00,buy,Indicative price; includes lid (item 3)
+3 Enclosure lid with gasket,1,Supplied with item 2,Electronics distributor,0.00,buy,Included with item 2
+4 DC-DC converter and protection,1,"9 to 36 V in, 5 V 1 A buck module; SMBJ36A-class TVS diode; reverse-polarity diode",Electronics distributor,7.00,buy,Indicative price
+5 Hold-up supercapacitor,1,"1 F 5.5 V, with charge resistor and diode",Electronics distributor,3.00,buy,Indicative price
+6 Controller,1,"ESP32-S3 board with Wi-Fi and microSD slot",Electronics distributor,10.00,buy,Indicative price; proposed choice awaiting Amish
+7 6-axis IMU breakout,1,"LSM6DSO class, +/-16 g, 400 Hz or more, I2C or SPI",Electronics distributor,6.00,buy,Indicative price
+8 GNSS module with patch antenna,1,"u-blox M10 class, multi-constellation, 10 Hz",Electronics distributor,15.00,buy,Indicative price
+9 Cable gland and fused lead,1,"M16 IP68 gland, 2 m two-core lead, inline 2 A blade fuse holder, ring terminals",Auto parts or electronics distributor,5.00,buy,Indicative price
+10 microSD card,1,32 GB high-endurance,Electronics retailer,6.00,buy,Indicative price; not shown in the model
+11 Hardware and consumables,1,"M6 bolts, locking nuts and washers, M3 standoffs, wire, heat shrink",Self,3.00,buy,Indicative price; not shown in the model
