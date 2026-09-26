@@ -42,13 +42,13 @@ The stakes go beyond vehicle damage. Road crashes kill about 1.16 million people
 | United States | About a quarter of urban principal arterial mileage rated above the poor IRI level in 2023 ([FHWA HM-64](https://www.fhwa.dot.gov/policyinformation/statistics/2023/hm64.cfm)); cities have large bus and refuse fleets to host loggers |
 | England and the United Kingdom | 17 % of local unclassified roads needed maintenance to be considered in 2024/25 ([DfT](https://www.gov.uk/government/statistics/road-conditions-in-england-to-march-2025)); councils already publish condition data |
 | Sub-Saharan Africa | Road traffic death rates are highest in the WHO African Region ([WHO](https://www.who.int/news-room/fact-sheets/detail/road-traffic-injuries)); minibus fleets cover dense networks where survey budgets are small |
-| India and South Asia | Fast-growing cities with heavy two-wheeler traffic and monsoon damage to road surfaces; municipal bus and waste fleets are large |
-| Latin America | Municipal bus networks run on streets that are rarely surveyed; open data supports public accountability for repairs |
-| Canada and northern Europe | Freeze-thaw cycles open potholes quickly in spring, so weekly data matters more than annual surveys |
+| India | Road accidents attributed to potholes numbered 4,775 in 2019 and 3,564 in 2020, according to the road transport ministry's reply in the Lok Sabha ([PIB, 16 December 2021](https://pib.gov.in/PressReleasePage.aspx?PRID=1782178)); fleet data could locate defects before they cause crashes |
+| Brazil | The 2025 CNT survey of 114,197 km of federal and main state highways rated the pavement fair, poor or very poor on 56.5 % of that length ([CNT, Pesquisa CNT de Rodovias 2025](https://repositorio.itl.org.br/jspui/bitstream/123456789/847/1/Pesquisa%20CNT%20de%20Rodovias%202025%20-%20S%C3%ADntese%20dos%20resultados%20-%20nacional,%20por%20regi%C3%A3o%20e%20por%20estados.pdf)); fleet loggers could extend condition data to city streets |
+| Canada | About 13 % of public road length was in poor or very poor condition in 2020 ([Statistics Canada, Core Public Infrastructure Survey](https://www150.statcan.gc.ca/n1/daily-quotidien/220524/dq220524a-eng.htm)); municipal transit and refuse fleets could survey local roads weekly |
 
 ## What sparked the idea
 
-The starting point was the International Road Roughness Experiment, held around Brasília, Brazil, in May and June 1982 by research teams from Brazil, England, France, the United States and Belgium. On 49 test sections, from asphalt to earth roads, it compared rod-and-level surveys and profilometers with seven response-type roughness systems, five of them roadmeters fitted to ordinary passenger cars, and the results became the basis of the International Roughness Index ([Sayers, Gillespie and Queiroz, World Bank Technical Paper 45, 1986](https://documents1.worldbank.org/curated/en/326081468740204115/pdf/multi-page.pdf)). The experiment showed that an everyday vehicle, calibrated on a few reference sections, can measure roughness on a common scale. PotholeLog applies that finding to the buses and refuse trucks that already drive every street, with an open, low-cost sensor in place of a mechanical roadmeter.
+The starting point was the International Road Roughness Experiment, held around Brasília, Brazil, in May and June 1982 by research teams from Brazil, the United Kingdom, France, the United States and Belgium. On 49 test sections, from asphalt to earth roads, it compared rod-and-level surveys and profilometers with seven response-type roughness systems, five of them roadmeters fitted to ordinary passenger cars, and the results became the basis of the International Roughness Index ([Sayers, Gillespie and Queiroz, World Bank Technical Paper 45, 1986](https://documents1.worldbank.org/curated/en/326081468740204115/pdf/multi-page.pdf)). The experiment showed that an everyday vehicle, calibrated on a few reference sections, can measure roughness on a common scale. PotholeLog applies that finding to the buses and refuse trucks that already drive every street, with an open, low-cost sensor in place of a mechanical roadmeter.
 
 ## Problem
 
@@ -93,6 +93,12 @@ The working bill of materials is in [bom/bom.csv](bom/bom.csv).
 ## Documentation
 
 Controlled documents follow the portfolio [documentation standard](.kit/STANDARDS.md). Each carries a document ID (PHL-PRC-001 for the precis), a version and a revision history. Branded PDFs are built with `python .kit/render.py` and attached to GitHub Releases when a document is tagged, for example `PHL-PRC-001/v1.0`.
+
+## Credits
+
+Designed by Amish Chadha. See [CONTRIBUTORS.md](CONTRIBUTORS.md) for roles. To cite this design, use [CITATION.cff](CITATION.cff) (GitHub shows it as "Cite this repository").
+
+AI assistance (Claude) was used to accelerate concept renders, prototype documentation and first-pass sizing calculations. Design direction and all decisions are Amish Chadha's, recorded in this repository's decision records (`docs/decisions/`).
 
 ## Licenses
 

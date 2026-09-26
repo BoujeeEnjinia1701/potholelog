@@ -204,3 +204,17 @@ Suggestions only, unchanged and not decisions: map matching for R4, a load flag 
 ### TRL 4
 
 TRL 4 remains on hold by Amish's instruction. Decided but on hold because they are TRL 4 work: a bench test of the converter and TVS against ISO 16750-2 load dump pulses (N1), and field data on slow-pass detection rates (N2). No build, test, firmware, PCB or purchasing work was started.
+
+## Session 2026-09-26: sources strengthened
+
+README "By country or region" rows without a citation were replaced or rewritten so each states only what a verified primary source supports. All kept links (FHWA HM-64, DfT, WHO, World Bank Technical Papers 45 and 46) were re-fetched and still support their claims.
+
+| Row | Old source | New source |
+| --- | --- | --- |
+| India and South Asia, now India | None (uncited claims on two-wheelers and monsoon damage) | Press Information Bureau, Lok Sabha reply of 16 December 2021: pothole-related accidents 4,775 (2019) and 3,564 (2020) |
+| Latin America, now Brazil | None | Confederação Nacional do Transporte, Pesquisa CNT de Rodovias 2025: pavement fair, poor or very poor on 56.5 % of 114,197 km |
+| Canada and northern Europe, now Canada | None (uncited freeze-thaw claim) | Statistics Canada, Core Public Infrastructure Survey (The Daily, 24 May 2022): 13 % of roads poor or very poor in 2020 |
+
+- What sparked the idea: the World Bank Technical Paper 45 source was kept (primary); "England" corrected to "the United Kingdom" to match the paper's list of participating countries.
+- India pothole death counts were again not used; only the accident counts in the PIB release could be verified.
+- No controlled document changed; `docs/01-problem.md` did not cite a weak source.
