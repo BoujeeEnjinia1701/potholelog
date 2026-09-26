@@ -3,7 +3,7 @@ doc_id: PHL-PRB-001
 title: PotholeLog problem statement
 project: PotholeLog
 doc_type: Problem statement
-version: "0.2"
+version: "0.3"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -17,6 +17,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Populate to TRL 2 (problem, users, context, constraints, prior work with sources)
+- version: "0.3"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Reflect PHL-DDR-001 (floor mount, depot upload, privacy rule, bicycles deferred) and the tyre-bridging finding of PHL-CAL-001
 ---
 
 # PotholeLog problem statement
@@ -47,7 +51,8 @@ Poor surfaces also matter for safety. About 1.16 million people die each year in
 Operating context assumed for the concept:
 
 - Host vehicles are city buses, refuse trucks and similar fleet vehicles on fixed or repeated routes. They run about 8 to 12 h a day at 0 to 80 km/h and return to a depot each night (assumption).
-- The logger is bolted to a rigid point of the vehicle floor or structure above the rear axle and wired to the ignition-switched 12 V or 24 V supply.
+- The logger is bolted to a rigid point of the vehicle floor or structure above the rear axle and wired to the ignition-switched 12 V or 24 V supply (floor mount adopted as recommended for TRL 3, PHL-DDR-001).
+- A bus tyre about 1 m in diameter bridges much of a small pothole: it can drop only about 22 mm into one 300 mm long (PHL-CAL-001). Small potholes are therefore best found on slower passes, and larger ones at any speed.
 - Each street is driven many times a month by one or more vehicles, so results can be averaged over passes and vehicles.
 - The vehicle filters the road input through its tyres and suspension, and each vehicle responds differently, so the raw signal must be calibrated per vehicle before it can be compared with IRI.
 
@@ -62,7 +67,8 @@ Operating context assumed for the concept:
 - Garage-buildable prototype, about $70 USD in parts per unit (`project.yaml`).
 - Off-the-shelf modules only; no custom PCB for the first build.
 - Installs on a fleet vehicle without cutting or welding structural members and without the driver doing anything.
-- Road data only: no camera, no microphone, and no driver behavior scoring.
+- Road data only: no camera, no microphone, and no driver behavior scoring. Only road-segment roughness and defect clusters are published; vehicle tracks and timestamps stay on the operator's server (privacy rule adopted as recommended for TRL 3, open for Amish's review).
+- This build serves buses and refuse trucks; a bicycle variant is a later step (PHL-DDR-001, D1).
 - Open hardware (CERN-OHL-S-2.0) and open software (MIT), with outputs in open formats (CSV, GeoJSON).
 
 ## Out of scope
@@ -77,7 +83,7 @@ Operating context assumed for the concept:
 
 This design is for communities the author is not part of, so requirements come from the people who will use it.
 
-- [ ] Identify a local partner organization (Helpful Engineering network, NGO or university)
+- [ ] Identify a local partner organization (Helpful Engineering network, NGO or university); the first pilot partner and city are proposed, awaiting Amish
 - [ ] Run co-design sessions with intended users; record who, where and what was learned
 - [ ] Validate load, distance, terrain and cost assumptions in the field
 - [ ] Revise requirements (REQ) from findings before freezing the design

@@ -65,3 +65,75 @@ Requirements not met or at risk:
 ### Recommended next step
 
 Review this note and the media, then decide items 1 and 2. If approved, run `/advance-trl3` to check the sampling, power, hold-up and plate stiffness by calculation, define the roughness metric and calibration method, and produce the parametric model and drawing sheet.
+
+## Session 2026-09-25: TRL 3
+
+Amish asked on 2026-09-25 for this batch of repos to be taken through the usual process with the instruction "you know the drill, nothing gets past TRL 3". He has not reviewed this repo's TRL 2 items one by one, so each item with a recommendation is adopted as recommended for TRL 3 under that instruction and remains open for his review. This session ran `/advance-trl3` and stopped at TRL 3.
+
+### What was done
+
+- `docs/decisions/0001-trl2-review-decisions.md` (PHL-DDR-001 v0.1, status proposed): items D1 to D7 adopted as recommended for TRL 3 under Amish's 2026-09-25 instruction, open for his review; O1 (first pilot partner and city) left as "Proposed, awaiting Amish".
+- `docs/04-calcs/01-sizing.md` (PHL-CAL-001 v0.1) and `docs/04-calcs/sizing.py`: a quarter-car model of a bus rear corner on ISO 8608 road profiles with golden-car IRI; roughness signal, noise, speed and load effects and a synthetic calibration; pothole detection with tyre enveloping; location error; storage, upload, power, transients and hold-up; self-heating, mass and fixings; plate stiffness and installation time; cost. The script imports the model's parameters and part volumes and reads the BOM and `project.yaml`; every number in the note is printed by it (runs in about 10 s).
+- `cad/src/model.py`: parametric build123d model (plate with hole patterns, stock enclosure base and lid, converter, supercapacitor, controller with microSD card, IMU on the box floor, GNSS under the lid, gland and lead stub, M6 fixings). Exports `cad/step/` and `cad/stl/` for `potholelog-assembly`, `mounting-plate` and `enclosure`.
+- `cad/src/sheets.py` and `cad/drawings/PHL-DWG-001.svg`, `.pdf`, `.png`: general arrangement at Rev P1, 1:2, marked "CONCEPT, NOT FOR FABRICATION" and "PRELIMINARY, NOT FOR FABRICATION". PHL-DWG-001 was free because the concept blueprint is PHL-DWG-010.
+- `bom/bom.csv` (11 lines, all priced with a supplier or supplier type, $69.00) and `bom/bom-notes.md`.
+- `cad/src/concept_media.py` now builds from the model; all of `media/` was re-rendered and every image checked. The exploded view now has callouts 1 to 11 matching the BOM. Temporary `media/_views*` folders were removed.
+- PHL-PRB-001, PHL-PRC-001 and PHL-REQ-001 revised to v0.3; `README.md` (TRL 3, key numbers, links) and `project.yaml` (`trl: 3`, `trl_target: 3`, evidence list) updated. PDFs rebuilt in `docs/pdf/`.
+
+Design details specified by the calculations, within the adopted choices: GNSS with a PPS output to time-stamp IMU samples; uploads run with the ignition on (the hold-up cannot power Wi-Fi); shutdown starts only after about 2 s of low input so cranking dips are ridden through; front and rear axle impacts are paired; part grades of 85 °C for the controller module and card and 70 °C or more for the supercapacitor; the plate is bolted down before the box is fitted, because socket clearance is about 2 mm. The TRL 2 power estimate falls from 0.7 W to 0.54 W.
+
+### Requirement status (PHL-CAL-001, Table 5)
+
+2 not met, 4 at risk, 2 not verifiable at TRL 3, 4 met on paper, 4 met by design.
+
+| ID | Status | Key number |
+| --- | --- | --- |
+| R5 Speed range | **Not met** | Reference pothole (50 x 300 mm) margin 0.97 at 30 km/h, 0.54 at 50 km/h and 0.30 at 80 km/h on an IRI 4 road; a bus tyre drops only 22 mm into it |
+| R9 Vehicle power | **Not met** (transients) | 24 V suppressed load dump 58 V against a 36 V converter; running power 0.54 W is met |
+| R1 Detection | At risk | Margin above 1 up to about 20 km/h (IRI 4) and 50 km/h (IRI 2); 93 % of passes hit the pothole |
+| R4 Location | At risk | 95 % radius 2.3 m suburban, 18.2 m dense urban after 10 passes |
+| R11 Environment | At risk | About 72 °C inside at +70 °C; part grades and vibration loosening |
+| R12 Installation | At risk | 30 min task estimate at the limit; plate mode 186 Hz met |
+| R2, R3 | Not verifiable at TRL 3 | Synthetic calibration r² 0.93 from one pass, 0.99 from five |
+| R7, R8, R10, R15 | Met on paper | 133 to 160 days on 32 GB; 112 kB uploaded in about 8 s; 7.0 s hold-up; $69.00 of $70 |
+| R6, R13, R14, R16 | Met by design | 400 Hz, ±16 g, peak 0.14 g; privacy rule; CSV and GeoJSON; buses and refuse trucks |
+
+Key numbers: 5.23 kB/s raw; 0.37 kg (0.51 kg with lead and fixings); load changes the roughness signal by ±7 % with air suspension and up to 22 % with steel springs.
+
+### Decisions recorded (PHL-DDR-001)
+
+Adopted as recommended for TRL 3 under Amish's 2026-09-25 instruction, open for his review: D1 keep the pitch and treat bicycles as a later variant (R16 redefined to buses and refuse trucks for this build); D2 depot Wi-Fi first, cellular as a separately costed add-on; D3 floor mount above the rear axle; D4 ESP32-S3; D5 LSM6DSO-class IMU and M10-class GNSS; D6 100 m segments and point events in CSV and GeoJSON after the CityTwin export; D7 publish road-level results only, no driver scoring. No new budget and no pitch or problem rewording were recommended, so `budget_usd` stays at $70 and the pitch still names bikes.
+
+### Still awaiting Amish
+
+1. **O1, first pilot partner and city.** No partner, city or preference was named at TRL 2; none is chosen here.
+2. **New, converter input for 24 V vehicles (R9).** Options: (a) a 60 V-rated converter, about $2 more, $71.00 in parts, $1 over budget; (b) keep the 36 V part and limit the build to 12 V vehicles, which excludes most buses; (c) add a surge-stopper front end, more robust and more costly. Recommendation: (a), with `budget_usd` raised to about $75 to restore a small margin. Not applied: the BOM still carries the 36 V part and `budget_usd` is unchanged at $70.
+3. **New, defect-detection target (R1, R5).** Options: (a) keep the targets and accept R5 as not met; (b) limit the R5 defect-detection range to 10 to 30 km/h and rely on repeat slow passes near stops and junctions; (c) change the R1 reference defect to one at least 600 mm long, which is detectable at all speeds (margin 1.67 at 80 km/h on IRI 4). Recommendation: (b), keeping the 300 mm reference, because it matches how buses drive in town. Not applied.
+
+Suggestions only, not in the repo: map matching to street centerlines for R4 in dense streets; a load flag for steel-sprung refuse trucks; testing the gyroscope's roll rate as a second detection channel for one-sided potholes.
+
+### Cross-repo consistency
+
+- PotholeLog uses no FieldNode, CellGuard, MotionCore, ThermaCart or CalRig component. It relates to TwinKit only through CityTwin's open data export (D6).
+- CityTwin's review (session 2026-09-25, /populate) lists the PotholeLog upload path as undefined (its R1 at risk) and recommends one-way publishing, with the gateway accepting no inbound connections. PotholeLog uploads to the fleet operator's server, so CityTwin would need to fetch the operator's daily segment files, or the operator would pass them on by another route. This is not a conflict, but the path must be agreed between the two repos; no change was made to CityTwin.
+- CityTwin plans to publish PotholeLog data "per road segment and per day". PotholeLog's R13 excludes timestamps from published data. A publication date for a daily aggregate is compatible with R13 as long as pass times are not published; to confirm when the interface is agreed.
+
+### Safety concerns
+
+- The 36 V converter in the BOM is not rated for a 24 V load dump. Until item 2 is decided it must not be fitted to a 24 V vehicle; the precis and README say so.
+- A loose box is a projectile: crash loads are small (18 N per M6 bolt at 20 g), but loosening under years of vibration is untested. Locking nuts and bolting to structure, not thin floor panels, stay mandatory.
+- False reassurance: small potholes can be missed at speed (R5), so a clean map is not proof of a sound road. Outputs remain uncertified and must not drive contract acceptance or safety decisions.
+- Location data can reveal drivers' movements; the privacy rule (D7) still needs agreement with the fleet partner and its drivers.
+- Working under and around vehicles and on vehicle electrics during installation, as at TRL 2.
+
+### Gaps and notes
+
+- The quarter-car model is linear, uses a rigid tyre circle and ignores pitch, roll and body flexing; ISO 8608 roads are Gaussian and lack joints and covers. The ISO 16750-2 levels, the IMU noise figure and the GNSS accuracy classes are stated as assumptions to confirm from the documents; they were not fetched this session.
+- Citations: no unchecked citations remain in the docs. The figures left out at TRL 2 (AAA damage costs, the UK ALARM survey, India pothole deaths) were not re-attempted; WebSearch was unavailable.
+- The kit's cutaway cuts at the mean Y of the parts, which removed the IMU; `cad/src/concept_media.py` swaps in a cut on the IMU's plane (a project-side wrapper; the kit is unchanged). The logger stays at the origin and the grey context scene is shifted, as at TRL 2.
+- In the hero render the logger is small beside the wheel and floor, which is its true scale.
+- Existing material beyond TRL 3: `build-log/README.md` (scaffold only) is present, untouched and not extended. No test, build, firmware or PCB material exists.
+
+### Recommended next step
+
+TRL 4 is on hold by Amish's instruction; this repo stops at TRL 3. Amish's review is needed on items 1 to 3 above and on D1 to D7. For the record only, TRL 4 would need: a bench build of the logger; a lab test report (TST, `environment: lab`) covering IMU noise and timing against PPS, power and hold-up with power cuts, and ISO 16750-2 transients on the chosen converter; and build log entries. Drive data over surveyed defects and reference IRI sections would follow at TRL 5. None of this has been started.

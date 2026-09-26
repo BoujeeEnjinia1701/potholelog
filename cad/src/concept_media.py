@@ -1,66 +1,60 @@
-"""PotholeLog concept massing model and media (TRL 2).
+"""PotholeLog concept media (TRL 3), generated from the parametric model.
 
 Run from the repo root:  python cad/src/concept_media.py
-Proportions and main parts only; not for fabrication.
+Takes the logger parts from cad/src/model.py (PARAMS), adds a grey context scene (road with a
+pothole, wheel, axle, suspension and a floor section) for scale, and renders the media set with
+.kit/concept.py. Parts are colored and numbered to match bom/bom.csv. Figures on the sheet and in
+the flow diagram come from docs/04-calcs/sizing.py (PHL-CAL-001). Not for fabrication.
 
 Coordinates in mm. X points forward along the vehicle, Y across it, Z up; the vehicle floor is
-at Z = 0 and the road surface 1150 mm below it. The logger is a small box bolted to the vehicle floor above the rear axle, so the hero
-render uses a grey context scene (road with a pothole, wheel, axle, suspension and a floor
-section) instead of the 1.75 m person.
+at Z = 0 and the road surface 1150 mm below it. The logger is a small box bolted to the vehicle
+floor above the rear axle, so the hero render uses the grey context scene instead of the 1.75 m
+person.
 """
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / ".kit"))
-from build123d import Box, Cylinder, Pos, Rot
-from concept import Part, render_all
+ROOT = Path(__file__).resolve().parents[2]
+sys.path[:0] = [str(ROOT / ".kit"), str(ROOT / "cad" / "src")]
+from build123d import Box, Cylinder, Pos, Rot  # noqa: E402
+import concept  # noqa: E402
+from concept import Part, render_all  # noqa: E402
+from model import PARAMS as P, build_parts  # noqa: E402
 
-# ---------------- logger, local frame: origin at the floor surface, box centered on it ----------------
-BOX_L, BOX_W = 120.0, 90.0       # stock IP65 box footprint, X by Y
-BASE_H, LID_H, WALL = 43.0, 12.0, 2.5
-PLATE_L, PLATE_W, PLATE_T = 160.0, 110.0, 4.0
+
+def cut_at_imu_plane(parts, keep="+Y"):
+    """Like concept.cutaway_parts, but cut on the plane Y = IMU center, so the IMU on the box
+    floor shows in section (the kit cuts at the mean Y of the parts, about 10 mm behind the IMU,
+    which removes it). The kit is unchanged."""
+    big = 4000.0
+    cutter = Pos(0, P["imu_xy"][1] + big / 2, 0) * Box(big, big, big)
+    out = []
+    for p in parts:
+        s = p.shape & cutter
+        if s.volume > 1e-6:
+            out.append(Part(p.name, s, p.color, p.bom, p.explode, p.alpha))
+    return out
+
+
+concept.cutaway_parts = cut_at_imu_plane
 
 # The logger is modeled at the origin (the kit's cutaway cutter is centered at Z = 0); the grey
 # context scene is shifted instead so the floor top meets the plate. Floor top is 1150 mm above
 # the road; the logger sits above the axle, inboard of the wheel.
 FLOOR_Z = 1150.0
 
-
-def at(shape):
-    """Logger parts stay in the local frame."""
-    return shape
-
-
-def hollow_box(l, w, h, wall, open_top=True):
-    outer = Box(l, w, h)
-    inner = Pos(0, 0, wall if open_top else -wall) * Box(l - 2 * wall, w - 2 * wall, h)
-    return outer - inner
-
-
-z0 = PLATE_T                                       # plate sits on the floor, box sits on the plate
-plate = Pos(0, 0, PLATE_T / 2) * Box(PLATE_L, PLATE_W, PLATE_T)
-base = Pos(0, 0, z0 + BASE_H / 2) * hollow_box(BOX_L, BOX_W, BASE_H, WALL, open_top=True)
-lid = Pos(0, 0, z0 + BASE_H + LID_H / 2) * hollow_box(BOX_L, BOX_W, LID_H, WALL, open_top=False)
-fl = z0 + WALL                                     # inside floor of the box
-imu = Pos(0, -5, fl + 2.0) * Box(20, 20, 4)
-controller = Pos(-31, 22, fl + 10.0) * Box(52, 26, 9) + Pos(-31, 22, fl + 2.75) * Box(40, 6, 5.5)   # board on a standoff rail
-power = Pos(31, 22, fl + 7.0) * Box(40, 30, 14)
-supercap = Pos(2.5, 24, fl + 10.0) * Cylinder(8, 20)
-gnss = Pos(-25, 20, z0 + BASE_H + LID_H - WALL - 4.0) * Box(28, 28, 8)                   # under the lid top
-gland = Pos(-BOX_L / 2 - 9, 10, z0 + 20) * Rot(0, 90, 0) * Cylinder(10, 18)
-lead = Pos(-BOX_L / 2 - 18 - 75, 10, 3.5) * Rot(0, 90, 0) * Cylinder(3.5, 150) \
-    + Pos(-BOX_L / 2 - 20, 10, (3.5 + z0 + 20) / 2) * Cylinder(3.5, z0 + 20 - 3.5)
-cable = gland + lead
-
+m = build_parts()
 parts = [
-    Part("Mounting plate, aluminum", at(plate), "#9CA3AF", 1, (0, 0, 0)),
-    Part("Enclosure base, IP65", at(base), "#374151", 2, (0, 0, 45)),
-    Part("Enclosure lid with gasket", at(lid), "#14B8A6", 3, (0, 0, 270)),
-    Part("DC-DC converter and protection", at(power), "#2563EB", 4, (0, 0, 120)),
-    Part("Hold-up supercapacitor", at(supercap), "#7C3AED", 5, (0, 0, 140)),
-    Part("Controller, Wi-Fi, microSD", at(controller), "#065F46", 6, (0, 0, 160)),
-    Part("6-axis IMU", at(imu), "#C2410C", 7, (0, 0, 90)),
-    Part("GNSS module and patch antenna", at(gnss), "#D4A017", 8, (0, 0, 175)),
-    Part("Cable gland and fused lead", at(cable), "#1F2937", 9, (-40, 0, 45)),
+    Part("Mounting plate, aluminum", m["plate"], "#9CA3AF", 1, (0, 0, 0)),
+    Part("Enclosure base, IP65", m["base"], "#374151", 2, (0, 0, 45)),
+    Part("Enclosure lid with gasket", m["lid"], "#14B8A6", 3, (0, 0, 270)),
+    Part("DC-DC converter and protection", m["converter"], "#2563EB", 4, (40, 0, 120)),
+    Part("Hold-up supercapacitor", m["supercap"], "#7C3AED", 5, (0, 30, 150)),
+    Part("Controller, Wi-Fi, microSD slot", m["controller"], "#065F46", 6, (-40, 0, 160)),
+    Part("6-axis IMU", m["imu"], "#C2410C", 7, (0, -190, 60)),
+    Part("GNSS module and patch antenna", m["gnss"], "#D4A017", 8, (0, 0, 205)),
+    Part("Cable gland and fused lead", m["lead"], "#1F2937", 9, (-45, 0, 45)),
+    Part("microSD card, 32 GB", m["sd"], "#DC2626", 10, (-110, 0, 150)),
+    Part("M6 bolts, washers, locking nuts", m["fixings"], "#6B7280", 11, (0, 0, 20)),
 ]
 
 # ---------------- grey context: road with a pothole, wheel, axle, suspension, floor ----------------
@@ -84,17 +78,18 @@ context = [Part("Road with pothole", CTX * road, "#A8AEB6"),
 
 render_all(
     parts, project="PotholeLog", title="Fleet road roughness logger concept", dwg_no="PHL-DWG-010",
-    key_figures=["3-axis acceleration at 400 Hz, GNSS at 10 Hz",
+    key_figures=["Acceleration 400 Hz, GNSS 10 Hz with PPS",
                  "100 m roughness segments plus pothole events",
-                 "Box about 120 x 90 x 59 mm, about 0.4 kg (estimate)",
-                 "About 0.7 W from a 12 or 24 V supply (estimate)",
-                 "About $69 in parts (indicative)"],
-    date="2026-09-25", scale_figure=False, context=context, cut_exclude=("Cable gland and fused lead",),
-    flow={"title": "data flow (estimates; road data only, no images or audio)", "unit": "",
+                 "Box 120 x 90 x 55 mm on a 160 x 110 mm plate; 0.37 kg",
+                 "0.54 W from a 12 or 24 V supply; 7 s hold-up (PHL-CAL-001)",
+                 "$69 in parts (indicative), budget $70"],
+    date="2026-09-25", scale_figure=False, context=context,
+    cut_exclude=("Cable gland and fused lead", "M6 bolts, washers, locking nuts"),
+    flow={"title": "data flow (values from PHL-CAL-001; road data only, no images or audio)", "unit": "",
           "stages": [("Road surface", "potholes, roughness"),
                      ("Wheel, suspension", "filter the input"),
-                     ("Logger on floor", "400 Hz accel + GNSS"),
+                     ("Logger on floor", "5.2 kB/s raw to card"),
                      ("On-board summary", "100 m segments"),
-                     ("Depot Wi-Fi upload", "0.1 MB/day (est.)"),
+                     ("Depot Wi-Fi upload", "112 kB/day, about 8 s"),
                      ("Open road map", "CSV, GeoJSON")]},
 )

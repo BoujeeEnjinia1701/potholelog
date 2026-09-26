@@ -1,20 +1,20 @@
 # PotholeLog
 
-![TRL 2](https://img.shields.io/badge/TRL-2%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827)
+![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827)
 
-**Area:** Smart Cities · **TRL:** 2 of 9 (concept formulated) · **Prototype budget:** about $70 USD · **Difficulty:** 2 of 5
+**Area:** Smart Cities · **TRL:** 3 of 9 (proof of concept on paper) · **Prototype budget:** about $70 USD · **Difficulty:** 2 of 5
 
 A vehicle-mounted road roughness logger for buses, garbage trucks or bikes that records vibration with location to map potholes and rough roads as the fleet drives its routes.
 
 ![PotholeLog concept](media/hero.png)
 
-[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [Review note](docs/REVIEW.md)
+[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement (PDF)](cad/drawings/PHL-DWG-001.pdf) · [Calculations](docs/04-calcs/01-sizing.md) · [Review note](docs/REVIEW.md)
 
 ## Concept rationale
 
 Fleets already cover the road network every week, and a small sensor turns routine trips into a road survey. PotholeLog is a sealed box bolted to the floor of a bus or refuse truck above the rear axle. It logs vertical acceleration at 400 Hz with GNSS position, reports a roughness value for every 100 m of road and flags sharp impacts as possible potholes. Many passes by many vehicles are averaged, and each vehicle is calibrated on a few reference sections to give an estimate on the International Roughness Index (IRI) scale, following the method the World Bank set out for response-type roughness meters ([Technical Paper 46](https://documents1.worldbank.org/curated/en/851131468160775725/pdf/multi-page.pdf)).
 
-It is open and garage-buildable because the agencies with the least survey money most need the data, and the parts are ordinary: an ESP32 board, an IMU breakout, a GNSS module, a vehicle DC-DC converter and a stock IP65 box, for about $69. Open firmware and an open data format let a city check how its road map was made and let others improve the detection method on the same raw data.
+It is open and garage-buildable because the agencies with the least survey money most need the data, and the parts are ordinary: an ESP32 board, an IMU breakout, a GNSS module, a vehicle DC-DC converter and a stock IP65 box, for $69 in parts (indicative). Open firmware and an open data format let a city check how its road map was made and let others improve the detection method on the same raw data.
 
 ## Burning platform
 
@@ -56,23 +56,25 @@ Road surveys are expensive and infrequent, so repairs follow complaints rather t
 
 ## Concept
 
-A vehicle-mounted road roughness logger for buses, garbage trucks or bikes that records vibration with location to map potholes and rough roads as the fleet drives its routes. The first concept targets buses and refuse trucks on vehicle power, with summaries uploaded over depot Wi-Fi; a bicycle variant would need its own battery and mount and is proposed as a later step, awaiting Amish. First-order estimates: about 0.7 W, about 0.1 MB of summaries a day, about 5 months of raw data on a 32 GB card and about $69 in parts. Detection accuracy and calibration are unverified until field data exist.
+A vehicle-mounted road roughness logger for buses, garbage trucks or bikes that records vibration with location to map potholes and rough roads as the fleet drives its routes. This build targets buses and refuse trucks on vehicle power, with summaries uploaded over depot Wi-Fi; a bicycle variant, which needs its own battery and mount, is a later step (adopted as recommended for TRL 3 under Amish's 2026-09-25 instruction, open for his review).
 
-Full design precis: [docs/02-concept.md](docs/02-concept.md) · Requirements: [docs/03-requirements.md](docs/03-requirements.md)
+The TRL 3 calculations ([PHL-CAL-001](docs/04-calcs/01-sizing.md)) give 0.54 W running, 112 kB of summaries a day, 133 to 160 days of raw data on a 32 GB card, 7 s of hold-up and $69.00 in parts against a $70 budget. They also found two limits: a bus tyre bridges most of a 300 mm pothole, so small potholes are found reliably only at low speed (up to about 20 km/h on a fair road, 50 km/h on a good one), and the 36 V converter is not rated for a load dump on a 24 V vehicle. Both are listed for Amish's review. Detection accuracy and calibration remain unverified until field data exist.
+
+Full design precis: [docs/02-concept.md](docs/02-concept.md) · Requirements: [docs/03-requirements.md](docs/03-requirements.md) · Decisions: [PHL-DDR-001](docs/decisions/0001-trl2-review-decisions.md) · Parametric model: [cad/src/model.py](cad/src/model.py)
 
 ## Key components
 
 - 6-axis IMU (LSM6DSO class) fixed to the enclosure floor
-- GNSS module with patch antenna (u-blox M10 class)
+- GNSS module with patch antenna and PPS output (u-blox M10 class)
 - ESP32-S3 controller with Wi-Fi and microSD storage
 - 9 to 36 V vehicle DC-DC converter with fuse, TVS and reverse-polarity protection, plus a hold-up supercapacitor
-- Stock IP65 enclosure on an aluminum mounting plate
+- Stock IP65 enclosure, 120 x 90 x 55 mm, on a 160 x 110 x 4 mm aluminum mounting plate
 
 The working bill of materials is in [bom/bom.csv](bom/bom.csv).
 
 ## Safety
 
-> Bolt the mounting plate through at existing fixing points so nothing can detach in a crash or hard stop, and never cut or weld structural members. Wire only to a fused, ignition-switched circuit with the battery isolated during installation, and route the lead away from moving parts and sharp edges. Never interact with the device while driving. Location data can reveal drivers' movements: publish only road-level results. This is a research prototype, not certified to automotive standards. See [docs/02-concept.md](docs/02-concept.md#safety).
+> Bolt the mounting plate through at existing fixing points so nothing can detach in a crash or hard stop, and never cut or weld structural members. Wire only to a fused, ignition-switched circuit with the battery isolated during installation, and route the lead away from moving parts and sharp edges. Do not fit the current 36 V converter to a 24 V vehicle without a 60 V-rated input stage. Never interact with the device while driving. Location data can reveal drivers' movements: publish only road-level results. This is a research prototype, not certified to automotive standards. See [docs/02-concept.md](docs/02-concept.md#safety).
 
 ## Repository layout
 
