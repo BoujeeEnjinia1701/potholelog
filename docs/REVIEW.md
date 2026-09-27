@@ -218,3 +218,26 @@ README "By country or region" rows without a citation were replaced or rewritten
 - What sparked the idea: the World Bank Technical Paper 45 source was kept (primary); "England" corrected to "the United Kingdom" to match the paper's list of participating countries.
 - India pothole death counts were again not used; only the accident counts in the PIB release could be verified.
 - No controlled document changed; `docs/01-problem.md` did not cite a weak source.
+
+## Session 2026-09-26: product appearance model and photoreal renders
+
+Amish chose this repo for the first batch of product renders on 2026-09-26. This session added `cad/src/product_model.py`, an appearance model for photoreal renders, and pointed the README hero at `media/render-hero.png` with a link to `media/render-exploded.png` (both produced later by the render pipeline).
+
+What `product_model.py` adds, reusing `PARAMS`, `derived()` and `build_parts()` from `cad/src/model.py` with every main dimension and interface unchanged (plate, hole patterns, 120 x 90 x 55 mm box, module positions, gland position and lead path):
+
+- Mounting plate with rounded corners and edge rounds; hex M6 bolt heads and washers (item 11).
+- Enclosure base and lid with corner and edge fillets, a lid-to-base parting line, lid gasket, corner screw pillars and stainless lid screws, as on a stock IP65 box.
+- M16 cable gland with hex body, locknut and knurled dome cap; the fused lead swept from the gland down to the floor, with a P-clip.
+- Internals with credible detail: converter board with inductor, capacitors, TVS and terminal block; sleeved supercapacitor; controller PCB with ESP32-S3 module shield, USB-C, headers and microSD slot; IMU breakout with spacers and screws; GNSS PCB with ceramic patch antenna.
+- Context: a compact section of painted steel vehicle floor with two crossmembers under the fixings.
+- `TITLE` and three `RENDER_VIEWS`: hero (front left, with the floor), exploded (front right) and detail (front right, without the floor).
+
+Where the appearance model differs from `model.py` (none of these change a main dimension or interface):
+
+1. **Clear window in the lid over the GNSS patch antenna.** The BOM lid is opaque. Proposed, awaiting Amish. Recommendation: keep it for the renders only, or choose a stock box with a clear lid if Amish wants a visible antenna; GNSS reception is fine through either.
+2. **Two status light pipes (power and logging) in the lid.** Not in the BOM or the firmware sketch. Proposed, awaiting Amish. Recommendation: adopt; a driver can see at a glance that the logger is running, at a cost of well under $1.
+3. **Breather vent on the +X end wall.** Not in the BOM. Proposed, awaiting Amish. Recommendation: adopt a pressure-equalizing vent (about $2 to $3) to limit condensation in a sealed box that heats and cools daily; this would use about half of the $4 margin left in the $75 budget, so Amish decides.
+4. **Teal nameplate with a forward arrow.** Not in the BOM. Proposed, awaiting Amish. Recommendation: adopt as a printed label; the arrow tells the installer which way the IMU axes face.
+5. **Lead P-clip and floor and crossmember context.** Context only; the clip counts under item 11 hardware. No decision needed.
+
+This is appearance only. No tolerances, fabrication detail, PCB layout or purchasing work was added. `trl` stays 3, and TRL 4 remains on hold by Amish's instruction. Previews were checked with the kit renderer; the photoreal renders are left to the orchestrator. No git commands were run in this session, by instruction.
