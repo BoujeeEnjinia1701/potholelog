@@ -60,7 +60,7 @@ FALSE_PER_KM = 1.0                   # allowed background threshold crossings pe
 SPEEDS = [10, 20, 30, 50, 80]        # km/h
 DEFECT_BAND = (10, 30)               # km/h, R5 defect-detection range as restated under PHL-DDR-002 (N2)
 
-print("PotholeLog sizing, PHL-CAL-001 v0.2")
+print("PotholeLog sizing, PHL-CAL-001 v0.3")
 D = derived(P)
 print(f"Geometry from cad/src/model.py: plate {P['plate']} mm, holes {P['hole_pitch']} mm, box {P['box']} mm, "
       f"overall height {D['overall_h']:.0f} mm")
@@ -379,10 +379,13 @@ M_BUY = {"converter": 15, "supercap": 6, "controller": 10, "imu": 2, "gnss": 12,
          "gland": 12, "lead": 2 * 45, "fixings": 4 * 12}
 m_plate = parts["plate"].volume / 1000 * RHO["plate"]
 m_box = (parts["base"].volume + parts["lid"].volume) / 1000 * RHO["base"]
-m_inside = sum(M_BUY[k] for k in ("converter", "supercap", "controller", "imu", "gnss", "sd"))
+RHO_AL = 2.68
+m_carrier = parts["carrier"].volume / 1000 * RHO_AL          # carrier plate (PHL-DDR-003)
+M_KIT = 4 * 3.0 + 4 * 1.0 + 2 * 0.6 + 8 * 0.3 + 1.0          # standoffs, screws, nylon standoffs, tape (g)
+m_inside = sum(M_BUY[k] for k in ("converter", "supercap", "controller", "imu", "gnss", "sd")) + m_carrier + M_KIT
 m_logger = m_plate + m_box + m_inside + M_BUY["gland"]
 m_total = m_logger + M_BUY["lead"] + M_BUY["fixings"]
-tag("H2", f"mass: plate {m_plate:.0f} g, enclosure {m_box:.0f} g (polycarbonate), modules {m_inside:.0f} g, gland {M_BUY['gland']} g: "
+tag("H2", f"mass: plate {m_plate:.0f} g, enclosure {m_box:.0f} g (polycarbonate), modules on their carrier {m_inside:.0f} g (carrier {m_carrier:.0f} g, fixings {M_KIT:.0f} g), gland {M_BUY['gland']} g: "
           f"logger {m_logger / 1000:.2f} kg; with 2 m lead and fixings {m_total / 1000:.2f} kg")
 CRASH_G, BUMP_G = 20.0, 10.0
 F_crash = m_logger / 1000 * CRASH_G * G
@@ -390,7 +393,7 @@ M6_SHEAR = 0.6 * 800 * 20.1         # N, property class 8.8, stress area 20.1 mm
 m_above = (m_box + m_inside) / 1000
 F_box = m_above * CRASH_G * G
 tag("H3", f"{CRASH_G:.0f} g crash pulse: {F_crash:.0f} N on the plate, {F_crash / 4:.0f} N per M6 bolt against about {M6_SHEAR / 1000:.1f} kN "
-          f"shear capacity (factor {M6_SHEAR / (F_crash / 4):.0f}); {F_box:.0f} N on the 4 M4 box screws")
+          f"shear capacity (factor {M6_SHEAR / (F_crash / 4):.0f}); {F_box:.0f} N on the 4 M4 hex standoffs that hold the box to the plate")
 
 # ------------------------------------------------------------------ I. Plate stiffness and installation (R12)
 print("\nI. Plate stiffness and installation (R12)")
@@ -422,9 +425,10 @@ with open(ROOT / "bom" / "bom.csv") as fh:
 total = sum(float(r["unit_cost_usd"]) * float(r["qty"]) for r in bom)
 import yaml  # noqa: E402
 budget = float(yaml.safe_load((ROOT / "project.yaml").read_text())["budget_usd"])
-tag("J1", f"BOM {len(bom)} lines, ${total:.2f} against budget_usd ${budget:.0f}: margin ${budget - total:.2f}")
-tag("J2", f"the 60 V-rated converter is in the BOM (about $2 more than the 36 V part, ${total - 2:.2f} before); LTE-M option (about $20 to $30) would give "
-          f"${total + 20:.0f} to ${total + 30:.0f}, over budget")
+tag("J1", f"BOM {len(bom)} lines: estimated cost of the constructable design ${total:.2f}; value-engineering target (budget_usd) ${budget:.0f}; "
+          f"${abs(budget - total):.2f} {'under' if total <= budget else 'over'} the target")
+tag("J2", f"the 60 V-rated converter is in the BOM (about $2 more than the 36 V part); the carrier plate and box fixing kit added for construction "
+          f"(PHL-DDR-003) add $3.50; the LTE-M option (about $20 to $30) would give ${total + 20:.0f} to ${total + 30:.0f}, over the target")
 
 # ------------------------------------------------------------------ K. Summary for the results table
 print("\nK. Summary")

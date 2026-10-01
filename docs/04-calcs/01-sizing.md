@@ -3,9 +3,9 @@ doc_id: PHL-CAL-001
 title: PotholeLog sizing calculations
 project: PotholeLog
 doc_type: Calculation
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,17 +17,21 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002)
+- version: "0.3"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Design made constructable (PHL-DDR-003); mass, fixings, plate stiffness and cost re-run; budget treated as a value-engineering target
 ---
 
 # PotholeLog sizing calculations
 
-On paper, PotholeLog meets eight of its sixteen requirements (four by calculation, four by design), has six at risk, cannot show two at TRL 3 and misses none. Version 0.2 applies Amish's 2026-09-25 decisions (PHL-DDR-002). Version 0.1 found two misses. First, a bus tyre largely bridges the R1 reference pothole (50 mm deep, 300 mm long), so a floor-mounted logger sees it clearly only at low speed: in the quarter-car model the impact stands above ordinary road vibration up to about 20 km/h on a fair road (IRI 4) and about 50 km/h on a good one (IRI 2), and not at 80 km/h. R5's defect-detection range is now restated as 10 to 30 km/h, relying on repeat slow passes near stops and junctions; it is met on good roads and misses by a hair (margin 0.97) at 30 km/h on fair ones, so R5 moves from not met to at risk, and R1 stays at risk. Second, the 9 to 36 V converter was exceeded by a suppressed load dump on a 24 V vehicle. The BOM now carries a 60 V-rated converter, which clears the 58 V load dump and the 58.1 V TVS clamp by 1.9 V; the TVS pulse energy is unverified, so R9 moves from not met to at risk. The parts cost rises from $69.00 to $71.00 against a budget raised from $70 to $75. The roughness function itself looks sound: the signal is 12 times the sensor noise at 20 km/h on a smooth road, and a synthetic calibration against IRI gives r² of 0.93 from one pass and 0.99 from five. Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [C2], is the line of that script's output that carries it.
+On paper, PotholeLog meets eight of its sixteen requirements (four by calculation, four by design), has six at risk, cannot show two at TRL 3 and misses none. Version 0.2 applies Amish's 2026-09-25 decisions (PHL-DDR-002). Version 0.1 found two misses. First, a bus tyre largely bridges the R1 reference pothole (50 mm deep, 300 mm long), so a floor-mounted logger sees it clearly only at low speed: in the quarter-car model the impact stands above ordinary road vibration up to about 20 km/h on a fair road (IRI 4) and about 50 km/h on a good one (IRI 2), and not at 80 km/h. R5's defect-detection range is now restated as 10 to 30 km/h, relying on repeat slow passes near stops and junctions; it is met on good roads and misses by a hair (margin 0.97) at 30 km/h on fair ones, so R5 moves from not met to at risk, and R1 stays at risk. Second, the 9 to 36 V converter was exceeded by a suppressed load dump on a 24 V vehicle. The BOM now carries a 60 V-rated converter, which clears the 58 V load dump and the 58.1 V TVS clamp by 1.9 V; the TVS pulse energy is unverified, so R9 moves from not met to at risk. Version 0.3 re-runs the mass, fixing, stiffness and cost lines for the constructable design of PHL-DDR-003, which adds a carrier plate for the modules and a box fixing kit: the logger is now 0.43 kg, the plate's first mode 168 Hz (still above the 150 Hz target) and the estimated cost $74.00, $1.00 under the $75 value-engineering target. The roughness function itself looks sound: the signal is 12 times the sensor noise at 20 km/h on a smooth road, and a synthetic calibration against IRI gives r² of 0.93 from one pass and 0.99 from five. Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [C2], is the line of that script's output that carries it.
 
 > **Safety:** These are first-principles estimates for a paper proof of concept. They are not a survey method, an automotive electrical approval or a mounting approval. Outputs must not drive contract acceptance or safety decisions without validation against a calibrated reference. See PHL-PRC-001, Safety.
 
 ## Scope and method
 
-The note checks every requirement in PHL-REQ-001 v0.4 against the design in PHL-PRC-001 v0.4 and the parametric model `cad/src/model.py`. The script imports the model's `PARAMS`, derived dimensions and part volumes, so the plate, hole pattern, enclosure and masses used here are the ones in the STEP files and in drawing PHL-DWG-001. It also reads `bom/bom.csv` and `budget_usd` in `project.yaml`. Run it from the repo root with `python docs/04-calcs/sizing.py`.
+The note checks every requirement in PHL-REQ-001 v0.5 against the design in PHL-PRC-001 v0.5, the constructable design of PHL-DDR-003 and the parametric model `cad/src/model.py`. The script imports the model's `PARAMS`, derived dimensions and part volumes, so the plate, hole pattern, enclosure and masses used here are the ones in the STEP files and in drawing PHL-DWG-001. It also reads `bom/bom.csv` and `budget_usd` in `project.yaml`. Run it from the repo root with `python docs/04-calcs/sizing.py`.
 
 The vehicle is a linear quarter-car model of one side of a 12 m city bus's rear axle: sprung body, unsprung axle and twin tyres. Random road profiles follow the ISO 8608 spectral shape and are solved in the frequency domain; their IRI comes from the standard golden-car model at 80 km/h, following World Bank Technical Paper 46. A single pothole is enveloped by a rigid tyre circle and solved in the time domain. The logger reads the body's vertical acceleration at the floor centerline above the axle.
 
@@ -132,18 +136,18 @@ Margins below 1 (bold) mean the pothole is lost in ordinary road vibration.
 ## H. Environment and fixings (R11)
 
 - **Self-heating.** 0.54 W over 339 cm² of box raises the inside by 2.0 K, so at +70 °C ambient the parts see about 72 °C [H1]. The GNSS, IMU, converter and a high-endurance card are commonly rated to 85 °C, but many supercapacitors are rated to 70 °C and some ESP32-S3 module variants (those with octal PSRAM) are rated to 65 °C. BOM items 5, 6 and 10 now state the grades needed. Parked in the sun with the ignition off, the logger sees only storage temperature.
-- **Mass.** The plate is 187 g, the polycarbonate enclosure 126 g, the modules 46 g and the gland 12 g: 0.37 kg for the logger, 0.51 kg with the 2 m lead and fixings [H2]. The TRL 2 estimate of 0.4 kg stands.
-- **Fixings.** A 20 g crash pulse puts 73 N on the plate, 18 N per M6 bolt against about 9.6 kN of shear capacity, and 34 N on the four M4 box screws [H3]. Strength is not a concern; loosening under long-term vibration is, and only a test can show that locking nuts suffice.
+- **Mass.** The plate is 187 g, the polycarbonate enclosure with its moulded lid-screw pillars 143 g, the modules on their carrier 90 g (of which the aluminium carrier is 24 g and its standoffs, screws and tape 21 g) and the gland 12 g: 0.43 kg for the logger, 0.57 kg with the 2 m lead and fixings [H2]. The TRL 2 estimate of 0.4 kg is close.
+- **Fixings.** A 20 g crash pulse puts 85 N on the plate, 21 N per M6 bolt against about 9.6 kN of shear capacity, and 46 N on the four M4 hex standoffs that hold the box to the plate [H3]. Strength is not a concern; loosening under long-term vibration is, and only a test can show that locking nuts suffice.
 - **R11 is at risk:** the temperature margin depends on part grades, and vibration and loosening cannot be verified at TRL 3.
 
 ## I. Plate stiffness and installation (R12)
 
-- **Stiffness.** Spanning 140 mm between corner bolts with nothing beneath, on half its width, the 4 mm plate has a stiffness of 359 kN/m under a moving mass of 263 g and a first mode of 186 Hz; on full-width supports it is 263 Hz [I1]. A 3.5 mm plate would just reach 150 Hz on the conservative model [I2]. The bracket part of R12 is met on paper. The mode sits near the 200 Hz Nyquist limit, so the IMU's internal low-pass filter should be set well below 200 Hz. A thin floor panel has its own lower modes, so the plate should bolt to a crossmember, seat rail or other stiff structure.
-- **Installation time.** The tasks add up to 30 min, exactly the R12 limit [I3]. Tool clearance around the bolts is tight: the hole centers are 10 mm beyond the box end walls, leaving about 2 mm for a 10 mm socket [I4], so the plate should be bolted down before the box is fitted. **R12 is at risk** on installation time.
+- **Stiffness.** Spanning 140 mm between corner bolts with nothing beneath, on half its width, the 4 mm plate has a stiffness of 359 kN/m under a moving mass of 324 g and a first mode of 168 Hz; on full-width supports it is 237 Hz [I1]. A 3.7 mm plate would just reach 150 Hz on the conservative model [I2], so the 4 mm plate keeps a small margin. The bracket part of R12 is met on paper. The mode sits near the 200 Hz Nyquist limit, so the IMU's internal low-pass filter should be set well below 200 Hz. A thin floor panel has its own lower modes, so the plate should bolt to a crossmember, seat rail or other stiff structure.
+- **Installation time.** The tasks add up to 30 min, exactly the R12 limit [I3]. Tool clearance around the bolts is tight: the hole centers are 10 mm beyond the box end walls, leaving about 2 mm for a 10 mm socket [I4]; a ring spanner or a thin-wall socket is needed, and the build plan uses a ring spanner on the assembled logger. **R12 is at risk** on installation time.
 
 ## J. Cost (R15)
 
-The BOM has 11 lines totaling $71.00 against the $75 `budget_usd`, a margin of $4.00 [J1]. The 60 V converter added about $2 (from $69.00) and the budget was raised from $70 to $75 under PHL-DDR-002 (N1). **R15 is met on paper.** The LTE-M option would bring the cost to $91 to $101 [J2], over budget; it is not in the BOM.
+Value-engineering target: USD 75 (`budget_usd`, a hypothetical control target, not a limit). Estimated cost of the constructable design: USD 74.00 from the 13-line BOM (USD 1.00 under the target) [J1]. The 60 V converter added about $2 under PHL-DDR-002 (N1), and the carrier plate and box fixing kit added for construction (PHL-DDR-003) add $3.50 [J2]. **R15 is met on paper.** The LTE-M option would bring the cost to $94 to $104 [J2], over the target; it is not in the BOM.
 
 ## K. Results against every requirement
 
@@ -155,14 +159,14 @@ The BOM has 11 lines totaling $71.00 against the $75 `budget_usd`, a margin of $
 | R9 | Run from vehicle power | 0.54 W running, 1.42 W for 8 s uploading; 24 V suppressed load dump 58 V and TVS clamp 58.1 V against a 60 V converter [F4], [F5] | 9 to 36 V, under 1 W, ISO 16750-2 transient levels | At risk (1.9 V margin; TVS pulse energy unverified) |
 | R1 | Detect potholes | Margin above 1 up to 20 km/h on IRI 4 and 50 km/h on IRI 2; 93 % of passes hit | 80 % found within 3 passes | At risk; field data needed |
 | R4 | Locate defects | 95 % radius 2.3 m suburban, 18.2 m dense urban (10 passes) | 10 m, correct street | At risk |
-| R11 | Survive the vehicle environment | About 72 °C inside at +70 °C; crash factor 531 | -20 to +70 °C, IP65, no loosening | At risk (part grades; vibration unverifiable) |
-| R12 | Install quickly and safely | 30 min; plate first mode 186 Hz | 30 min; above 150 Hz | At risk (install time at the limit) |
+| R11 | Survive the vehicle environment | About 72 °C inside at +70 °C; crash factor 455 | -20 to +70 °C, IP65, no loosening | At risk (part grades; vibration unverifiable) |
+| R12 | Install quickly and safely | 30 min; plate first mode 168 Hz | 30 min; above 150 Hz | At risk (install time at the limit) |
 | R2 | Keep false reports low | Not computable from Gaussian roughness | 10 % or fewer false clusters | Not verifiable at TRL 3 |
 | R3 | Report roughness per segment | Synthetic r² 0.93 from one pass, 0.99 from five | r² 0.8 against reference IRI | Not verifiable at TRL 3 (supported on paper) |
 | R7 | Store data on the vehicle | 133 to 160 days on 32 GB | 30 days | Met on paper |
 | R8 | Get data off the vehicle | 112 kB in 8.4 s with the ignition on in depot Wi-Fi | Within 24 h, no staff action | Met on paper (vehicles in daily service) |
 | R10 | Shut down cleanly | 7.0 s hold-up at end of life, 1 s needed | No corruption on power loss | Met on paper |
-| R15 | Low cost and buildable | $71.00 | $75 (PHL-DDR-002, N1) | Met on paper ($4 margin) |
+| R15 | Low cost and buildable | $74.00 | $75 value-engineering target | Met on paper ($1.00 under the target) |
 | R6 | Sample fast enough | 400 Hz, ±16 g, 10 Hz GNSS; peak 0.14 g | 400 Hz, ±8 g, 5 Hz | Met by design |
 | R13 | Protect privacy | No camera or microphone; pass times kept by the operator only | Road-level data only | Met by design |
 | R14 | Open outputs | CSV and GeoJSON per the CityTwin export (D6) | Readable by CityTwin and GIS | Met by design (CityTwin ingest path still open) |
@@ -183,7 +187,7 @@ Counts: 0 not met, 6 at risk, 2 not verifiable at TRL 3, 4 met on paper, 4 met b
 | About 0.1 MB of summaries a day | 112 kB [E4] | Stands |
 | About 0.7 W, about 60 mA at 12 V | 0.54 W, 45 mA at 12 V [F1], [F2] | Precis updated |
 | About 9 s hold-up | 10.0 s new, 7.0 s at end of life [G1] | Precis updated |
-| About 0.4 kg | 0.37 kg; 0.51 kg with lead and fixings [H2] | Stands |
-| About $69 | $71.00 with the 60 V converter [J1] | Updated under PHL-DDR-002 |
+| About 0.4 kg | 0.43 kg; 0.57 kg with lead and fixings [H2] | Updated for the constructable design (PHL-DDR-003) |
+| About $69 | $74.00 with the 60 V converter and the construction parts [J1] | Updated under PHL-DDR-002 and PHL-DDR-003 |
 | 9 to 36 V input covers 12 V and 24 V vehicles | Not for 24 V load dump with the 36 V part; within 60 V [F4] | 60 V converter decided (PHL-DDR-002, N1) |
 | Detection margin "thin at high speed" | Lost at 30 km/h and above (IRI 4) or 80 km/h (IRI 2) for the reference pothole [K1] | R5 range restated as 10 to 30 km/h (PHL-DDR-002, N2); at risk |

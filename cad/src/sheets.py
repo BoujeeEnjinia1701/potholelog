@@ -1,4 +1,4 @@
-"""PotholeLog general arrangement sheet PHL-DWG-001, Rev P2 (TRL 3).
+"""PotholeLog general arrangement sheet PHL-DWG-001, Rev P3 (TRL 3, constructable design PHL-DDR-003).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/PHL-DWG-001.svg, .pdf and .png from the parametric model in
@@ -14,7 +14,7 @@ sys.path[:0] = [str(ROOT / ".kit"), str(ROOT / "cad" / "src")]
 from drawing import Sheet, _viewbox, _t, M, TB_Y, INK, MUTED  # noqa: E402
 from model import PARAMS as P, assembly, derived  # noqa: E402
 
-DATE = "2026-09-25"
+DATE = "2026-10-01"
 DWG = "PHL-DWG-001"
 
 
@@ -99,11 +99,12 @@ def main():
     asm = assembly()
     views = safe_project_views(asm, work)
     bb = asm.bounding_box()
-    s = Sheet(project="PotholeLog", title="General arrangement", dwg_no=DWG, rev="P2",
+    s = Sheet(project="PotholeLog", title="General arrangement", dwg_no=DWG, rev="P3",
               author="Amish Chadha", date=DATE, scale=None, theme="technical",
               material="Al 5052 plate; stock IP65 box; bought-in parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
-              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
-                         ("P2", "Supply note: 60 V converter (PHL-DDR-002)", DATE, "AC")])
+              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", "2026-09-25", "AC"),
+                         ("P2", "Supply note: 60 V converter (PHL-DDR-002)", "2026-09-25", "AC"),
+                         ("P3", "Constructable design: standoffs, carrier, IMU screws (PHL-DDR-003)", DATE, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(s, views)
@@ -159,11 +160,12 @@ def main():
     s.add_svg(views["iso"], 276, 34, 140, 98, label="Isometric view", sublabel="Not to scale")
     s.add_notes("Main dimensions and interfaces (mm)", [
         f"Plate Al 5052 {pl:.0f} x {pw:.0f} x {pt:.0f}; 4 x M6 on {hx:.0f} x {hy:.0f}",
-        f"Stock IP65 box {bl:.0f} x {bw:.0f} x {D['box_h']:.0f}; 4 x M4 to plate on {P['box_screw_pitch'][0]:.0f} x {P['box_screw_pitch'][1]:.0f}",
-        f"Overall height {D['overall_h']:.0f} on the floor; logger about 0.37 kg",
+        f"Stock IP65 box {bl:.0f} x {bw:.0f} x {D['box_h']:.0f}; 4 x M4 hex standoffs into plate on {P['box_screw_pitch'][0]:.0f} x {P['box_screw_pitch'][1]:.0f}",
+        f"Modules on a {P['carrier'][0]:.0f} x {P['carrier'][1]:.0f} x {P['carrier'][2]:g} Al carrier on the standoffs",
+        f"Overall height {D['overall_h']:.0f} on the floor; logger about 0.43 kg",
         "Bolt at existing floor, seat-rail or crossmember fixings",
-        "Plate first mode about 186 Hz on corner bolts (PHL-CAL-001)",
-        "IMU screwed flat to the box floor; X axis forward",
+        "Plate first mode about 168 Hz on corner bolts (PHL-CAL-001)",
+        "IMU on box floor, 2 x M3 into plate; X axis forward",
         "GNSS under the plastic lid; keep metal off the lid",
         "Supply 9 to 36 V, converter rated 60 V; fused 2 A, ignition switched; 0.54 W",
         "Third-angle; front view from -Y; X forward along the vehicle",

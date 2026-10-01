@@ -3,9 +3,9 @@ doc_id: PHL-REQ-001
 title: PotholeLog requirements
 project: PotholeLog
 doc_type: Requirements
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,11 +25,15 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002)
+- version: "0.5"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: "Constructable design (PHL-DDR-003): R12 plate mode and R15 cost updated; budget treated as a value-engineering target"
 ---
 
 # PotholeLog requirements
 
-These requirements are checked by calculation in PHL-CAL-001 v0.2. Targets are unchanged from v0.2 except R16, redefined for this build under PHL-DDR-001 (D1), and R5, whose defect-detection range is restated as 10 to 30 km/h under PHL-DDR-002 (N2). Both were decided by Amish on 2026-09-25 (go with recommendation). The status column gives the result on paper: "met on paper" means a calculation shows the target is met under the stated assumptions; "met by design" means the chosen parts and architecture meet it; "not verifiable at TRL 3" means only data from a vehicle can show it.
+These requirements are checked by calculation in PHL-CAL-001 v0.3. Targets are unchanged from v0.2 except R16, redefined for this build under PHL-DDR-001 (D1), and R5, whose defect-detection range is restated as 10 to 30 km/h under PHL-DDR-002 (N2). Both were decided by Amish on 2026-09-25 (go with recommendation). The status column gives the result on paper: "met on paper" means a calculation shows the target is met under the stated assumptions; "met by design" means the chosen parts and architecture meet it; "not verifiable at TRL 3" means only data from a vehicle can show it.
 
 Table 1. Requirements.
 
@@ -46,10 +50,10 @@ Table 1. Requirements.
 | R9 | Run from vehicle power | 9 to 36 V DC input (12 V and 24 V systems); reverse-polarity protected; transient levels of ISO 16750-2 as a target; under 1 W running; no draw with ignition off At risk: 60 V-rated converter (PHL-DDR-002, N1) clears the 58 V suppressed load dump and the 58.1 V TVS clamp by 1.9 V; TVS pulse energy during a load dump needs a bench test; running power 0.54 W met | Power budget; later bench test |
 | R10 | Shut down cleanly | Files closed without corruption when power is cut at any time | Met on paper (7.0 s hold-up at end of life; 1 s needed) | Hold-up calculation |
 | R11 | Survive the vehicle environment | Operating -20 to +70 °C; enclosure IP65; no loosening under vehicle vibration | At risk: about 72 °C inside at +70 °C needs 85 °C part grades; vibration not verifiable | Component ratings; later vibration test |
-| R12 | Install quickly and safely | 30 min or less by a fleet mechanic; no cutting or welding of structural members; bracket first natural frequency above 150 Hz | At risk: 30 min task estimate at the limit; plate first mode 186 Hz met on paper | Design review |
+| R12 | Install quickly and safely | 30 min or less by a fleet mechanic; no cutting or welding of structural members; bracket first natural frequency above 150 Hz | At risk: 30 min task estimate at the limit; plate first mode 168 Hz met on paper (constructable design, PHL-DDR-003) | Design review |
 | R13 | Protect privacy | No camera or microphone; published data limited to road-segment roughness and defect locations, with no vehicle tracks, timestamps or driver identity; no driver scoring | Met by design (privacy rule D7) | Design review; data schema review |
 | R14 | Open outputs | CSV and GeoJSON outputs that CityTwin and common GIS tools can read | Met by design (format D6); the CityTwin ingest path is still open | Sample export |
-| R15 | Low cost and buildable | Parts $75 or less per unit (budget raised from $70 under PHL-DDR-002, N1); off-the-shelf modules; no custom PCB | Met on paper ($71.00, $4 margin) | Priced BOM |
+| R15 | Low cost and buildable | Parts cost against the $75 value-engineering target (a hypothetical control target, raised from $70 under PHL-DDR-002, N1); off-the-shelf modules; no custom PCB | Met on paper ($74.00, $1.00 under the target) | Priced BOM |
 | R16 | Fit the fleet types in this build | Buses and refuse trucks; a bicycle variant is deferred to a later step (PHL-DDR-001, D1) | Met by design for buses and refuse trucks; bicycles are not served by this build | Design review |
 
 ## Requirements not met or at risk
@@ -60,7 +64,7 @@ Table 1. Requirements.
 - **R4 at risk** in dense urban streets, where GNSS errors repeat between passes.
 - **R11 and R12 at risk.** Part temperature grades, vibration loosening and the 30 min installation are all at their limits.
 - **R2 and R3 not verifiable at TRL 3.** Both need field data and a calibration partner with reference IRI sections.
-- **R15.** The 60 V converter takes the parts cost to $71.00 against the $75 budget; any cellular option would still exceed it.
+- **R15.** Value-engineering target: USD 75. Estimated cost of the constructable design: USD 74.00 (USD 1.00 under the target), after the 60 V converter (PHL-DDR-002) and the carrier plate and box fixing kit added for construction (PHL-DDR-003). A cellular option would take it over the target.
 - **Bicycles.** The pitch still names bikes, but this build serves buses and refuse trucks only (R16 as redefined).
 
 ## Assumptions

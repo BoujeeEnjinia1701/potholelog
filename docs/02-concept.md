@@ -3,9 +3,9 @@ doc_id: PHL-PRC-001
 title: PotholeLog design precis
 project: PotholeLog
 doc_type: Design precis
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,13 +25,17 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002)
+- version: "0.5"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: "Constructable design (PHL-DDR-003): carrier plate, box fixing, component table and key numbers updated"
 ---
 
 # PotholeLog design precis
 
 ## Summary
 
-PotholeLog is a sealed box, 120 x 90 x 55 mm on a 4 mm plate (59 mm overall), bolted to the floor of a bus or refuse truck above the rear axle. It records how the vehicle shakes and where it is, turns each 100 m of road into a roughness value and flags sharp impacts as possible potholes, then uploads a small daily file over depot Wi-Fi. Averaged over many passes and calibrated per vehicle, the data gives a city a weekly map of road condition on every street its fleet drives. The TRL 3 calculations (PHL-CAL-001) show that off-the-shelf modules meet the sampling, storage, hold-up and power needs for $71 in parts, inside the $75 budget, and that the roughness signal is well above sensor noise. They also found two limits, both now addressed by Amish's 2026-09-25 decisions (PHL-DDR-002). A bus tyre bridges most of a 300 mm pothole, so the floor-mounted logger finds the R1 reference pothole only at low speed (up to about 20 km/h on a fair road, 50 km/h on a good one); small potholes are therefore sought on slow passes, 10 to 30 km/h, near stops and junctions. The converter is now rated 60 V so that it survives a load dump on a 24 V vehicle. Detection accuracy and calibration to IRI remain unverified until field data exist.
+PotholeLog is a sealed box, 120 x 90 x 55 mm on a 4 mm plate (59 mm overall), bolted to the floor of a bus or refuse truck above the rear axle. It records how the vehicle shakes and where it is, turns each 100 m of road into a roughness value and flags sharp impacts as possible potholes, then uploads a small daily file over depot Wi-Fi. Averaged over many passes and calibrated per vehicle, the data gives a city a weekly map of road condition on every street its fleet drives. The TRL 3 calculations (PHL-CAL-001) show that off-the-shelf modules meet the sampling, storage, hold-up and power needs for an estimated $74 in parts, $1 under the $75 value-engineering target, and that the roughness signal is well above sensor noise. They also found two limits, both now addressed by Amish's 2026-09-25 decisions (PHL-DDR-002). A bus tyre bridges most of a 300 mm pothole, so the floor-mounted logger finds the R1 reference pothole only at low speed (up to about 20 km/h on a fair road, 50 km/h on a good one); small potholes are therefore sought on slow passes, 10 to 30 km/h, near stops and junctions. The converter is now rated 60 V so that it survives a load dump on a 24 V vehicle. Detection accuracy and calibration to IRI remain unverified until field data exist. On 2026-10-01 the design was made constructable (PHL-DDR-003): the modules now sit on a carrier plate held by the four hex standoffs that fix the box to the mounting plate, and the build is described component by component in the prototype build plan ([PHL-BLD-001](05-build-plan.md)).
 
 ![PotholeLog on a vehicle floor above the rear axle, with a wheel, suspension and a road with a pothole for scale](../media/hero.png)
 
@@ -56,17 +60,19 @@ Table 1. Main components. Numbers match the exploded view (Figure 3), `cad/src/m
 
 | # | Component | Proposed choice | Notes |
 | --- | --- | --- | --- |
-| 1 | Mounting plate | 160 x 110 x 4 mm aluminum, 4 x M6 on 140 x 90 mm | Bolts to existing crossmember, seat-rail or floor fixings; first mode about 186 Hz on corner bolts |
-| 2 | Enclosure base | Stock IP65 ABS or polycarbonate box, 120 x 90 mm | IMU screwed directly to its floor |
+| 1 | Mounting plate | 160 x 110 x 4 mm aluminum, 4 x M6 on 140 x 90 mm; tapped for the box standoffs and the IMU screws | Bolts to existing crossmember, seat-rail or floor fixings; first mode about 168 Hz on corner bolts |
+| 2 | Enclosure base | Stock IP65 ABS or polycarbonate box, 120 x 90 mm, with corner lid-screw pillars | Held to the plate by four M4 hex standoffs through its floor (PHL-DDR-003) |
 | 3 | Enclosure lid | Supplied with the box, with gasket | GNSS antenna under the lid; plastic lid keeps sky view through vehicle windows |
 | 4 | DC-DC converter and protection | 9 to 60 V in (60 V rated), 5 V 1 A out; TVS diode, reverse-polarity diode, input fuse | Covers normal 12 V and 24 V supplies and a 24 V suppressed load dump (58 V), clearing the TVS clamp by 1.9 V (PHL-DDR-002, N1) |
 | 5 | Hold-up supercapacitor | 1 F, 5.5 V, rated to 70 °C or more | About 7 s at end of life to close files when power drops |
 | 6 | Controller | ESP32-S3 board with Wi-Fi and microSD slot; module variant rated to 85 °C | Decided by Amish, 2026-09-25 (PHL-DDR-001, D4) |
-| 7 | IMU | 6-axis, LSM6DSO class, ±16 g, 400 Hz or more | Gyroscope helps separate body roll and pitch from vertical motion |
-| 8 | GNSS module | u-blox M10 class with patch antenna, 10 Hz, PPS output | Multi-constellation; PPS time-stamps the IMU samples |
+| 7 | IMU | 6-axis, LSM6DSO class, ±16 g, 400 Hz or more | On the box floor, held by two M3 screws through the floor into the plate; gyroscope helps separate body roll and pitch from vertical motion |
+| 8 | GNSS module | u-blox M10 class with patch antenna, 10 Hz, PPS output | Under the lid on a foam tape pad; PPS time-stamps the IMU samples |
 | 9 | Cable gland and fused lead | M16 gland, 2 m lead, inline 2 A fuse | Wired to an ignition-switched fused circuit |
 | 10 | microSD card | 32 GB high-endurance, -25 to 85 °C | 133 to 160 days of raw data |
-| 11 | Fixings | 4 x M6 (8.8) with locking nuts and washers; 4 x M4 box screws | Crash load is small; loosening needs a later test |
+| 11 | Fixings | 4 x M6 (8.8) with locking nuts and washers | Crash load is small; loosening needs a later test |
+| 12 | Module carrier plate | 92 x 76 x 1.5 mm aluminum with a window over the IMU | Carries the converter, supercapacitor and controller (PHL-DDR-003) |
+| 13 | Box fixing kit | 4 x M4 hex standoffs, screws, nylon standoffs, foam tape, sealant | Added for construction (PHL-DDR-003) |
 
 ![Exploded view with BOM callouts](../media/exploded.png)
 
@@ -78,11 +84,11 @@ Figure 4. Cutaway on the plane through the IMU. The IMU sits on the enclosure fl
 
 ![General arrangement drawing PHL-DWG-001](../cad/drawings/PHL-DWG-001.png)
 
-Figure 5. General arrangement PHL-DWG-001, Rev P2, generated from `cad/src/model.py` ([PDF](../cad/drawings/PHL-DWG-001.pdf)). Preliminary, not for fabrication.
+Figure 5. General arrangement PHL-DWG-001, Rev P3, generated from `cad/src/model.py` ([PDF](../cad/drawings/PHL-DWG-001.pdf)). Preliminary, not for fabrication.
 
 ## Key numbers
 
-All values are from PHL-CAL-001 v0.2 (`docs/04-calcs/sizing.py`), which states the assumptions; they are calculations for review, not measurements.
+All values are from PHL-CAL-001 v0.3 (`docs/04-calcs/sizing.py`), which states the assumptions; they are calculations for review, not measurements.
 
 Table 2. Key numbers.
 
@@ -102,19 +108,19 @@ Table 2. Key numbers.
 | Supply current | 45 mA at 12 V, 22 mA at 24 V | From running power | |
 | Hold-up time | 10.0 s new, 7.0 s at end of life | 1 F from 4.7 V to 3.6 V | R10 met; 1 s needed |
 | Inside temperature | About 72 °C at +70 °C ambient | 2.0 K self-heating | R11 at risk |
-| Plate first mode | 186 Hz on corner bolts | 4 mm aluminum, 140 mm span | R12 met on paper |
+| Plate first mode | 168 Hz on corner bolts | 4 mm aluminum, 140 mm span | R12 met on paper |
 | Installation | 30 min | Task estimate | R12 at the limit |
 | Size | 120 x 90 x 55 mm box on a 160 x 110 x 4 mm plate, 59 mm overall | `cad/src/model.py` | |
-| Mass | 0.37 kg; 0.51 kg with lead and fixings | Model volumes and module masses | |
+| Mass | 0.43 kg; 0.57 kg with lead and fixings | Model volumes and module masses | |
 | Converter input rating | 60 V against a 58 V suppressed load dump and a 58.1 V TVS clamp | ISO 16750-2 test B levels, to confirm | R9 at risk (TVS pulse energy) |
-| Parts cost | $71.00 | `bom/bom.csv` | R15 met with $4 margin against $75 |
+| Parts cost | $74.00 | `bom/bom.csv` | R15 met: $1.00 under the $75 value-engineering target |
 
 ## Key design choices
 
 The choices below were proposed at TRL 2 and decided by Amish on 2026-09-25 (go with recommendation; PHL-DDR-001 and PHL-DDR-002).
 
 - **Sprung-mass mount on the floor, not on the axle.** The floor is clean, dry and easy to reach, and the GNSS can see the sky through the windows. The axle would give a stronger, less filtered signal but sees large shocks, water and stones. Calibration per vehicle corrects for the suspension. PHL-CAL-001 supports the choice: the axle would see about 9 g, 65 times the floor peak.
-- **Depot Wi-Fi upload, not cellular.** It keeps parts cost within budget and avoids data plans. Cellular (for example an LTE-M module) would give same-day data but adds about $20 to $30 per unit and a monthly fee; it stays an optional add-on, costed separately.
+- **Depot Wi-Fi upload, not cellular.** It keeps parts cost near the value-engineering target and avoids data plans. Cellular (for example an LTE-M module) would give same-day data but adds about $20 to $30 per unit and a monthly fee; it stays an optional add-on, costed separately.
 - **Raw data kept on the card.** Storage is cheap, and raw data lets the detection method improve without new hardware.
 - **Summaries and events, not tracks, leave the vehicle's operator.** Only road-level results are published (R13).
 - **Controller, IMU and GNSS.** ESP32-S3 (Wi-Fi, low cost, wide community), an LSM6DSO-class IMU and a u-blox M10-class GNSS. The alternatives considered were an RP2040 board with a separate Wi-Fi module and an nRF52 board with a phone or gateway for upload.

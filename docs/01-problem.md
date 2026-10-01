@@ -3,9 +3,9 @@ doc_id: PHL-PRB-001
 title: PotholeLog problem statement
 project: PotholeLog
 doc_type: Problem statement
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,6 +25,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002)
+- version: "0.5"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Budget treated as a value-engineering target
 ---
 
 # PotholeLog problem statement
@@ -68,7 +72,7 @@ Operating context assumed for the concept:
 
 ## Constraints
 
-- Garage-buildable prototype, about $75 USD budget for parts per unit (`project.yaml`; raised from $70 under PHL-DDR-002 to cover a 60 V converter).
+- Garage-buildable prototype, with parts cost judged against a value-engineering target of about $75 USD per unit (`budget_usd` in `project.yaml`, a hypothetical control target, raised from $70 under PHL-DDR-002 to cover a 60 V converter); the constructable design is estimated at $74.
 - Off-the-shelf modules only; no custom PCB for the first build.
 - Installs on a fleet vehicle without cutting or welding structural members and without the driver doing anything.
 - Road data only: no camera, no microphone, and no driver behavior scoring. Only road-segment roughness and defect clusters are published; vehicle tracks and timestamps stay on the operator's server (privacy rule decided by Amish, 2026-09-25).

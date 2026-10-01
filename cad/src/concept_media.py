@@ -1,4 +1,4 @@
-"""PotholeLog concept media (TRL 3), generated from the parametric model.
+"""PotholeLog concept media (TRL 3, constructable design PHL-DDR-003), generated from the parametric model.
 
 Run from the repo root:  python cad/src/concept_media.py
 Takes the logger parts from cad/src/model.py (PARAMS), adds a grey context scene (road with a
@@ -49,12 +49,14 @@ parts = [
     Part("Enclosure lid with gasket", m["lid"], "#14B8A6", 3, (0, 0, 270)),
     Part("DC-DC converter and protection", m["converter"], "#2563EB", 4, (40, 0, 120)),
     Part("Hold-up supercapacitor", m["supercap"], "#7C3AED", 5, (0, 30, 150)),
-    Part("Controller, Wi-Fi, microSD slot", m["controller"], "#065F46", 6, (-40, 0, 160)),
+    Part("Controller, Wi-Fi, microSD slot", m["controller"], "#065F46", 6, (-40, 0, 150)),
     Part("6-axis IMU", m["imu"], "#C2410C", 7, (0, -190, 60)),
     Part("GNSS module and patch antenna", m["gnss"], "#D4A017", 8, (0, 0, 205)),
     Part("Cable gland and fused lead", m["lead"], "#1F2937", 9, (-45, 0, 45)),
     Part("microSD card, 32 GB", m["sd"], "#DC2626", 10, (-110, 0, 150)),
     Part("M6 bolts, washers, locking nuts", m["fixings"], "#6B7280", 11, (0, 0, 20)),
+    Part("Module carrier plate", m["carrier"], "#94A3B8", 12, (0, 0, 95)),
+    Part("Hex standoffs, screws, foam tape", m["kit"], "#111827", 13, (0, 0, 75)),
 ]
 
 # ---------------- grey context: road with a pothole, wheel, axle, suspension, floor ----------------
@@ -80,10 +82,10 @@ render_all(
     parts, project="PotholeLog", title="Fleet road roughness logger concept", dwg_no="PHL-DWG-010",
     key_figures=["Acceleration 400 Hz, GNSS 10 Hz with PPS",
                  "100 m roughness segments plus pothole events",
-                 "Box 120 x 90 x 55 mm on a 160 x 110 mm plate; 0.37 kg",
+                 "Box 120 x 90 x 55 mm on a 160 x 110 mm plate; 0.43 kg",
                  "0.54 W from a 12 or 24 V supply (60 V-rated input); 7 s hold-up",
-                 "$71 in parts (indicative), budget $75"],
-    date="2026-09-25", scale_figure=False, context=context,
+                 "$74 in parts (indicative); value-engineering target $75"],
+    date="2026-10-01", scale_figure=False, context=context,
     cut_exclude=("Cable gland and fused lead", "M6 bolts, washers, locking nuts"),
     flow={"title": "data flow (values from PHL-CAL-001; road data only, no images or audio)", "unit": "",
           "stages": [("Road surface", "potholes, roughness"),

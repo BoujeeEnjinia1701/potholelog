@@ -356,7 +356,7 @@ def product_parts(P=PARAMS):
     # 6 controller on a standoff rail, with ESP32-S3 module shield, USB-C and 10 microSD card
     kx, ky = P["controller_xy"]
     kw, kd, kh = P["controller"]
-    so = P["standoff"]
+    so = P["standoff_ctrl"]   # controller standoff height (PHL-DDR-003)
     rail = Pos(kx, ky, fl + so / 2) * Box(kw - 12, 6, so)
     rail = _fillet_try(rail, rail.edges().filter_by(Axis.X), [1.0, 0.5])
     add("Controller standoff rail", rail, "#4B5563", "plastic", 6, "internal", (0, 0, 112))

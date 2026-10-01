@@ -247,3 +247,50 @@ This is appearance only. No tolerances, fabrication detail, PCB layout or purcha
 - Kit 1.5.0 synced: STANDARDS v1.5 (sections 12 to 15: product renders, storefront images and image quality, public release, authorship and signing), `.kit/cards.py`, `.kit/image_qc.py`, `.kit/release_gate.py`, issue templates, and the `/render-product` and `/release` commands. `CLAUDE.md` now matches `.kit/CLAUDE.md`.
 - Every `media/render-*.png` recaptioned from its original render with the new layout: the title, concept label and repository sit in a band above the render and the view note in a band below it, each line wrapped to the image width, so no text overlaps other text or the render or runs off the image. `media/card.png` and `media/social-preview.png` regenerated with the same rules.
 - `python .kit/image_qc.py` and `python .kit/release_gate.py` pass. trl stays 3.
+
+## Session 2026-10-01: kit 1.7.0, constructable design and build plan
+
+Amish approved the build plan format on 2026-09-30 and asked for it across all repos, with outstanding decisions kept in a separate design decisions register. Under his 2026-09-30 instruction to make the design physically buildable ("If you are realising that the design cannot be built as per concept - fix the design assumptions to match and be physically feasible as you draw the illustrations."), this session made the PotholeLog design constructable and wrote the build plan. No git commands were run, by instruction.
+
+### What was done
+
+- Kit 1.7.0 installed (`.kit/`, `.claude/commands/`); `CLAUDE.md` now matches `.kit/CLAUDE.md`.
+- `cad/src/model.py`: constructable design with 48 build123d constructability checks (`python cad/src/model.py --check`), all passing. STEP and STL re-exported.
+- `docs/decisions/0003-design-for-construction.md` (PHL-DDR-003 v0.1, Draft): every change, with the reason; three questions "Proposed, awaiting Amish" (A1 to A3).
+- `bom/bom.csv`: line 12 (module carrier plate, $2.00) and line 13 (box fixing kit, $1.50) added; lines 1, 2, 4, 5, 7, 8 and 11 respecified; line 11 repriced to $2.50. Estimated cost $74.00.
+- `docs/04-calcs/sizing.py` and `01-sizing.md` (PHL-CAL-001 v0.3): mass, crash loads, plate stiffness and cost re-run; cost written against the value-engineering target.
+- `docs/02-concept.md` (PHL-PRC-001 v0.5), `docs/03-requirements.md` (PHL-REQ-001 v0.5), `docs/01-problem.md` (PHL-PRB-001 v0.5): figures and value-engineering wording.
+- `cad/drawings/PHL-DWG-001` Rev P3 (`cad/src/sheets.py`); concept media regenerated (`cad/src/concept_media.py`: hero, blueprint, exploded with callouts 1 to 13, cutaway, flow, model.glb).
+- `cad/src/build_plan_media.py`: overview, making sketches PHL-DWG-101 (mounting plate), 102 (enclosure base drilling) and 103 (module carrier plate), plate and box hole layouts, six joint close-ups, nine assembly step pictures and a block wiring diagram. Every picture was inspected; `drawing.py --check-text` is clean.
+- `docs/05-build-plan.md` (PHL-BLD-001 v0.1) and `docs/06-design-decisions.md` (PHL-DEC-001 v0.1). `project.yaml`: `design_state: constructable`, both new documents and PHL-DDR-003 in `trl_evidence`; `budget_usd` unchanged. README: links line, "Building the prototype" section, value-engineering wording.
+- `cad/src/product_model.py`: one key renamed so it still builds (controller standoff height); its appearance is otherwise unchanged.
+
+### Design changes made for construction (PHL-DDR-003)
+
+1. The box is held to the plate by four M4 male-female hex standoffs on 80 x 40 mm, through the floor into tapped holes in the plate (was four screws on 100 x 70 mm, two of them under the converter and all four on the box's corner pillars).
+2. A 92 x 76 x 1.5 mm aluminium carrier plate on the standoffs holds the converter and controller on nylon standoffs and the supercapacitor with a cable tie; a window leaves the IMU clear (the modules had no fixings).
+3. The converter is turned 90 degrees and the modules rearranged so nothing overlaps (the supercapacitor overlapped the controller by 0.5 mm).
+4. The gland has a 16.2 mm hole in the rear end wall and a locknut inside, with 4.5 mm or more to the carrier and modules.
+5. The IMU is held by two M3 screws through the box floor into the plate, so it is clamped to the aluminium.
+6. The GNSS module is held under the lid by a pad of acrylic foam tape, with a plug-in lead.
+7. The stock box's corner pillars and lid screws are modelled and every part is clear of them.
+8. The floor holes are sealed with a ring of neutral-cure silicone under the box.
+
+Knock-on: logger 0.43 kg (was 0.37 kg), 0.57 kg with lead and fixings; plate first mode 168 Hz (was 186 Hz; R12's 150 Hz still met on paper); estimated cost $74.00, $1.00 under the $75 value-engineering target. Requirement status unchanged: 0 not met, 6 at risk, 2 not verifiable, 4 met on paper, 4 met by design.
+
+### Proposed, awaiting Amish
+
+All open items are in `docs/06-design-decisions.md`: O1 pilot partner; the four appearance items of 2026-09-26 (clear lid window, light pipes, breather vent, nameplate); the CityTwin ingest path; and PHL-DDR-003 A1 (floor hole sealing), A2 (GNSS fixing) and A3 (spanner room at the M6 bolts).
+
+### Stale media (made on Amish's Mac)
+
+The outside of the logger is unchanged, so `media/render-hero.png`, `media/card.png` and `media/social-preview.png` are still true. `media/render-exploded.png` and `media/render-detail.png` show the concept's internal layout (no carrier plate, converter on the floor) and are stale; `cad/src/product_model.py` needs the carrier and new layout before they are re-rendered.
+
+### Safety
+
+- The build plan keeps bench power to a fused, current-limited supply and leaves vehicle fitting outside the plan, with safety stops before first power, before tests above 30 V and before any vehicle fitting.
+- Concerns from earlier sessions stand: the 1.9 V margin over the TVS clamp, projectile risk if bolted to thin panels, and location privacy.
+
+### Recommended next step
+
+Amish reviews PHL-DDR-003 and the register. TRL 4 (building to this plan and testing) remains on hold by his instruction.
