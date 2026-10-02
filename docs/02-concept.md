@@ -3,9 +3,9 @@ doc_id: PHL-PRC-001
 title: PotholeLog design precis
 project: PotholeLog
 doc_type: Design precis
-version: "0.5"
+version: "0.6"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -29,6 +29,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: "Constructable design (PHL-DDR-003): carrier plate, box fixing, component table and key numbers updated"
+- version: "0.6"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Decisions of 2026-10-02 (PHL-DEC-001): lid light pipes, nameplate and breather vent adopted; clear window renders only; CityTwin ingest and pooled dates; first pilot partner'
 ---
 
 # PotholeLog design precis
@@ -48,7 +52,7 @@ Figure 1. Concept massing model. The logger is the small dark box on the floor s
 3. **Summarize on board.** For every 100 m traveled, the controller computes a roughness value from the vertical acceleration (band-limited RMS from 0.5 to 20 Hz, tagged with its speed band for calibration), and records the segment's start and end, speed and the number of samples. Sharp vertical impacts above a threshold are stored as defect events, with most small potholes expected from slow passes at 10 to 30 km/h near stops and junctions (R5) with position, speed and peak size; the front and rear axle impacts of the same defect, about 0.4 to 0.7 s apart in town, are paired to confirm the event and place it at the rear axle.
 4. **Upload.** When the vehicle is back within depot Wi-Fi with the ignition on, on arrival or at the next start, the controller joins the network and uploads the day's summaries (about 112 kB, about 8 s) to the fleet's server. The hold-up capacitor cannot power Wi-Fi long enough to upload after the ignition is switched off.
 5. **Calibrate and aggregate.** On the server, each vehicle's raw roughness is converted to an IRI estimate using a calibration equation found on reference sections, in the way World Bank Technical Paper 46 describes for response-type systems ([Sayers et al., 1986](https://documents1.worldbank.org/curated/en/851131468160775725/pdf/multi-page.pdf)). Events from several passes and vehicles are clustered; a cluster seen on repeated passes becomes a reported defect, as in Pothole Patrol ([Eriksson et al., 2008](https://doi.org/10.1145/1378600.1378605)).
-6. **Publish.** The city publishes a map of segment roughness and defect clusters as CSV and GeoJSON, for its own GIS and for CityTwin. Vehicle tracks and timestamps stay on the operator's server.
+6. **Publish.** The city publishes a map of segment roughness and defect clusters as CSV and GeoJSON, for its own GIS and for CityTwin. Vehicle tracks and timestamps stay on the operator's server. CityTwin fetches the segment files from the operator's server; a date per segment is published only once at least two vehicles or several days are pooled, and pass times never are (decided 2026-10-02, PHL-DEC-001).
 
 ![Data flow from road surface to open road map](../media/flow.png)
 
@@ -61,8 +65,8 @@ Table 1. Main components. Numbers match the exploded view (Figure 3), `cad/src/m
 | # | Component | Proposed choice | Notes |
 | --- | --- | --- | --- |
 | 1 | Mounting plate | 160 x 110 x 4 mm aluminum, 4 x M6 on 140 x 90 mm; tapped for the box standoffs and the IMU screws | Bolts to existing crossmember, seat-rail or floor fixings; first mode about 168 Hz on corner bolts |
-| 2 | Enclosure base | Stock IP65 ABS or polycarbonate box, 120 x 90 mm, with corner lid-screw pillars | Held to the plate by four M4 hex standoffs through its floor (PHL-DDR-003) |
-| 3 | Enclosure lid | Supplied with the box, with gasket | GNSS antenna under the lid; plastic lid keeps sky view through vehicle windows |
+| 2 | Enclosure base | Stock IP65 ABS or polycarbonate box, 120 x 90 mm, with corner lid-screw pillars | Held to the plate by four M4 hex standoffs through its floor (PHL-DDR-003); a pressure-equalizing breather vent in the front end wall (decided 2026-10-02) |
+| 3 | Enclosure lid | Supplied with the box, with gasket; opaque; two sealed status light pipes (power and logging) and a printed nameplate label with a forward arrow (decided 2026-10-02) | GNSS antenna under the lid; plastic lid keeps sky view through vehicle windows; the clear window shown in the renders is for the renders only |
 | 4 | DC-DC converter and protection | 9 to 60 V in (60 V rated), 5 V 1 A out; TVS diode, reverse-polarity diode, input fuse | Covers normal 12 V and 24 V supplies and a 24 V suppressed load dump (58 V), clearing the TVS clamp by 1.9 V (PHL-DDR-002, N1) |
 | 5 | Hold-up supercapacitor | 1 F, 5.5 V, rated to 70 °C or more | About 7 s at end of life to close files when power drops |
 | 6 | Controller | ESP32-S3 board with Wi-Fi and microSD slot; module variant rated to 85 °C | Decided by Amish, 2026-09-25 (PHL-DDR-001, D4) |
@@ -149,8 +153,7 @@ The choices below were proposed at TRL 2 and decided by Amish on 2026-09-25 (go 
 - Does the TVS survive a 24 V load dump pulse with the 60 V converter, or is a surge stopper needed (R9)? Needs a bench test (TRL 4, on hold).
 - Are slow passes near stops and junctions frequent enough to meet R1 with the 10 to 30 km/h detection band (R5)? Needs field data.
 - How far off is GNSS in the partner city's densest streets, and is map matching needed for R4?
-- How will CityTwin receive the operator's daily segment files, given that its gateway accepts no inbound connections? To agree with CityTwin.
-- Which host fleet and city for a first pilot, and who provides reference IRI? Proposed, awaiting Amish.
+- Which host fleet and city for a first pilot, and who provides reference IRI? Decided 2026-10-02 (PHL-DEC-001): the first candidate to approach is a Dallas-Fort Worth area city with its own bus or refuse fleet, with TxDOT pavement management roughness data on state roads in that city as the reference IRI sections.
 - Should a bicycle variant be developed later, and with what battery and mount (R16)?
 
 Concept media: [blueprint sheet](../media/concept-blueprint.pdf), [interactive 3D model](../media/viewer.html). Calculations: [PHL-CAL-001](04-calcs/01-sizing.md). Decisions: [PHL-DDR-001](decisions/0001-trl2-review-decisions.md).

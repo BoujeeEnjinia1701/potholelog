@@ -3,9 +3,9 @@ doc_id: PHL-PRB-001
 title: PotholeLog problem statement
 project: PotholeLog
 doc_type: Problem statement
-version: "0.5"
+version: "0.6"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -29,6 +29,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Budget treated as a value-engineering target
+- version: "0.6"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'First pilot partner stated as decided on 2026-10-02 (PHL-DEC-001)'
 ---
 
 # PotholeLog problem statement
@@ -91,7 +95,7 @@ Operating context assumed for the concept:
 
 This design is for communities the author is not part of, so requirements come from the people who will use it.
 
-- [ ] Identify a local partner organization (Helpful Engineering network, NGO or university); the first pilot partner and city are proposed, awaiting Amish
+- [ ] Identify a local partner organization (Helpful Engineering network, NGO or university); the first pilot partner to approach is a Dallas-Fort Worth area city with its own bus or refuse fleet, with TxDOT pavement management roughness data on state roads in that city as the reference IRI sections (decided 2026-10-02, PHL-DEC-001)
 - [ ] Run co-design sessions with intended users; record who, where and what was learned
 - [ ] Validate load, distance, terrain and cost assumptions in the field
 - [ ] Revise requirements (REQ) from findings before freezing the design

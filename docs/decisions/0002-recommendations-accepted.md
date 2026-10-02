@@ -3,9 +3,9 @@ doc_id: PHL-DDR-002
 title: PotholeLog recommendations accepted
 project: PotholeLog
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,12 +13,16 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Record the recommendations accepted by Amish on 2026-09-25, what changed in the repo, and the items still open
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'O1 (first pilot partner) and the CityTwin ingest path decided by Amish on 2026-10-02'
 ---
 
 # 0002: Recommendations accepted
 
 - **Date:** 2026-09-25
-- **Status:** accepted. Items D1 to D7, N1 and N2 are "Decided by Amish, 2026-09-25: go with recommendation". Item O1 remains "Proposed, awaiting Amish".
+- **Status:** accepted. Items D1 to D7, N1 and N2 are "Decided by Amish, 2026-09-25: go with recommendation". Item O1 was decided by Amish on 2026-10-02 (PHL-DEC-001).
 
 ## Context
 
@@ -46,11 +50,11 @@ No design change altered geometry: the 60 V converter keeps the 40 x 30 x 14 mm 
 
 | # | Item | Status |
 | --- | --- | --- |
-| O1 | First pilot partner and city, and who provides reference IRI | Proposed, awaiting Amish (no recommendation was made) |
+| O1 | First pilot partner and city, and who provides reference IRI | No recommendation was made then. Decided by Amish, 2026-10-02 (PHL-DEC-001): first candidate to approach a Dallas-Fort Worth area city with its own bus or refuse fleet, with TxDOT pavement management roughness data on state roads in that city as the reference IRI sections |
 
 ## Cross-repo actions
 
-- **CityTwin ingest path (D6, R14).** CityTwin's gateway accepts no inbound connections, and PotholeLog uploads to the fleet operator's server. The two repos must agree whether CityTwin fetches the operator's daily segment files or the operator passes them on by another route, and confirm that a daily publication date is compatible with R13. Recorded here; CityTwin is not edited.
+- **CityTwin ingest path (D6, R14).** CityTwin's gateway accepts no inbound connections, and PotholeLog uploads to the fleet operator's server. The two repos must agree whether CityTwin fetches the operator's daily segment files or the operator passes them on by another route, and confirm that a daily publication date is compatible with R13. Recorded here; CityTwin is not edited. Decided 2026-10-02 (PHL-DEC-001): CityTwin fetches the daily segment files from the operator's server (option a, matching CityTwin's outbound pull, CTW-DDR-001 D11); a date per segment may be published but never pass times, and only once at least two vehicles or several days are pooled.
 
 ## Consequences
 

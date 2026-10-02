@@ -3,9 +3,9 @@ doc_id: PHL-CAL-001
 title: PotholeLog sizing calculations
 project: PotholeLog
 doc_type: Calculation
-version: "0.3"
+version: "0.4"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -21,6 +21,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Design made constructable (PHL-DDR-003); mass, fixings, plate stiffness and cost re-run; budget treated as a value-engineering target
+- version: "0.4"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Requirement table wording for R13 and R14 follows the decisions of 2026-10-02; no result changed'
 ---
 
 # PotholeLog sizing calculations
@@ -168,8 +172,8 @@ Value-engineering target: USD 75 (`budget_usd`, a hypothetical control target, n
 | R10 | Shut down cleanly | 7.0 s hold-up at end of life, 1 s needed | No corruption on power loss | Met on paper |
 | R15 | Low cost and buildable | $74.00 | $75 value-engineering target | Met on paper ($1.00 under the target) |
 | R6 | Sample fast enough | 400 Hz, ±16 g, 10 Hz GNSS; peak 0.14 g | 400 Hz, ±8 g, 5 Hz | Met by design |
-| R13 | Protect privacy | No camera or microphone; pass times kept by the operator only | Road-level data only | Met by design |
-| R14 | Open outputs | CSV and GeoJSON per the CityTwin export (D6) | Readable by CityTwin and GIS | Met by design (CityTwin ingest path still open) |
+| R13 | Protect privacy | No camera or microphone; pass times kept by the operator only; dates published only when pooled | Road-level data only | Met by design |
+| R14 | Open outputs | CSV and GeoJSON per the CityTwin export (D6) | Readable by CityTwin and GIS | Met by design (CityTwin fetches from the operator's server) |
 | R16 | Fit the fleet types in this build | Buses and refuse trucks on 9 to 36 V power (D1) | Buses and refuse trucks; bicycles deferred | Met by design (bicycle variant deferred) |
 
 Counts: 0 not met, 6 at risk, 2 not verifiable at TRL 3, 4 met on paper, 4 met by design (v0.1: 2 not met, 4 at risk).

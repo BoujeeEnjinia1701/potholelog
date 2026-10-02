@@ -3,9 +3,9 @@ doc_id: PHL-REQ-001
 title: PotholeLog requirements
 project: PotholeLog
 doc_type: Requirements
-version: "0.5"
+version: "0.6"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -29,6 +29,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: "Constructable design (PHL-DDR-003): R12 plate mode and R15 cost updated; budget treated as a value-engineering target"
+- version: "0.6"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Decisions of 2026-10-02 (PHL-DEC-001): R13 restated for published dates (pooled, never pass times); R14 CityTwin ingest path decided; R15 notes the cost of the adopted light pipes and vent. No status changed'
 ---
 
 # PotholeLog requirements
@@ -51,8 +55,8 @@ Table 1. Requirements.
 | R10 | Shut down cleanly | Files closed without corruption when power is cut at any time | Met on paper (7.0 s hold-up at end of life; 1 s needed) | Hold-up calculation |
 | R11 | Survive the vehicle environment | Operating -20 to +70 °C; enclosure IP65; no loosening under vehicle vibration | At risk: about 72 °C inside at +70 °C needs 85 °C part grades; vibration not verifiable | Component ratings; later vibration test |
 | R12 | Install quickly and safely | 30 min or less by a fleet mechanic; no cutting or welding of structural members; bracket first natural frequency above 150 Hz | At risk: 30 min task estimate at the limit; plate first mode 168 Hz met on paper (constructable design, PHL-DDR-003) | Design review |
-| R13 | Protect privacy | No camera or microphone; published data limited to road-segment roughness and defect locations, with no vehicle tracks, timestamps or driver identity; no driver scoring | Met by design (privacy rule D7) | Design review; data schema review |
-| R14 | Open outputs | CSV and GeoJSON outputs that CityTwin and common GIS tools can read | Met by design (format D6); the CityTwin ingest path is still open | Sample export |
+| R13 | Protect privacy | No camera or microphone; published data limited to road-segment roughness and defect locations, with no vehicle tracks, timestamps or driver identity; no driver scoring. A date per segment may be published, never pass times, and only once at least two vehicles or several days are pooled (PHL-DEC-001, 2026-10-02) | Met by design (privacy rule D7) | Design review; data schema review |
+| R14 | Open outputs | CSV and GeoJSON outputs that CityTwin and common GIS tools can read | Met by design (format D6); CityTwin fetches the segment files from the operator's server (PHL-DEC-001, 2026-10-02) | Sample export |
 | R15 | Low cost and buildable | Parts cost against the $75 value-engineering target (a hypothetical control target, raised from $70 under PHL-DDR-002, N1); off-the-shelf modules; no custom PCB | Met on paper ($74.00, $1.00 under the target) | Priced BOM |
 | R16 | Fit the fleet types in this build | Buses and refuse trucks; a bicycle variant is deferred to a later step (PHL-DDR-001, D1) | Met by design for buses and refuse trucks; bicycles are not served by this build | Design review |
 
@@ -64,7 +68,7 @@ Table 1. Requirements.
 - **R4 at risk** in dense urban streets, where GNSS errors repeat between passes.
 - **R11 and R12 at risk.** Part temperature grades, vibration loosening and the 30 min installation are all at their limits.
 - **R2 and R3 not verifiable at TRL 3.** Both need field data and a calibration partner with reference IRI sections.
-- **R15.** Value-engineering target: USD 75. Estimated cost of the constructable design: USD 74.00 (USD 1.00 under the target), after the 60 V converter (PHL-DDR-002) and the carrier plate and box fixing kit added for construction (PHL-DDR-003). A cellular option would take it over the target.
+- **R15.** Value-engineering target: USD 75. Estimated cost of the constructable design: USD 74.00 (USD 1.00 under the target), after the 60 V converter (PHL-DDR-002) and the carrier plate and box fixing kit added for construction (PHL-DDR-003). A cellular option would take it over the target. The status light pipes and breather vent adopted on 2026-10-02 (PHL-DEC-001) are not yet in the BOM; together they would take the estimate about USD 2 to 3 over the target.
 - **Bicycles.** The pitch still names bikes, but this build serves buses and refuse trucks only (R16 as redefined).
 
 ## Assumptions

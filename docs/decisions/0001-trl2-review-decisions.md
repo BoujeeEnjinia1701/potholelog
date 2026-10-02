@@ -3,9 +3,9 @@ doc_id: PHL-DDR-001
 title: PotholeLog TRL 2 review decisions
 project: PotholeLog
 doc_type: Design decision record
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,12 +17,16 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002)
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'O1 (first pilot partner) decided by Amish on 2026-10-02'
 ---
 
 # 0001: TRL 2 review decisions
 
 - **Date:** 2026-09-25
-- **Status:** items D1 to D7 decided by Amish, 2026-09-25: go with recommendation (see PHL-DDR-002); item O1 remains "Proposed, awaiting Amish".
+- **Status:** items D1 to D7 decided by Amish, 2026-09-25: go with recommendation (see PHL-DDR-002); item O1 decided by Amish on 2026-10-02 (PHL-DEC-001).
 
 ## Context
 
@@ -50,7 +54,7 @@ The options for each item are those listed in `docs/REVIEW.md` (session 2026-09-
 
 | # | Item | Status |
 | --- | --- | --- |
-| O1 | First pilot partner and city. The TRL 2 note described the kind of partner needed (a city road department with a bus or refuse fleet that can provide reference IRI sections, possibly found through the Helpful Engineering network) but named no partner, city or preference. No choice is made here. | Proposed, awaiting Amish |
+| O1 | First pilot partner and city. The TRL 2 note described the kind of partner needed (a city road department with a bus or refuse fleet that can provide reference IRI sections, possibly found through the Helpful Engineering network) but named no partner, city or preference. No choice is made here. | Decided by Amish, 2026-10-02, as recommended in PHL-DEC-001: first candidate to approach a Dallas-Fort Worth area city with its own bus or refuse fleet, with TxDOT pavement management roughness data on state roads in that city as the reference IRI sections |
 
 ## Consequences
 

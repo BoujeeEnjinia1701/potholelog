@@ -294,3 +294,37 @@ The outside of the logger is unchanged, so `media/render-hero.png`, `media/card.
 ### Recommended next step
 
 Amish reviews PHL-DDR-003 and the register. TRL 4 (building to this plan and testing) remains on hold by his instruction.
+
+## Session 2026-10-02: open-decision recommendations approved
+
+Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions." This approves the recommendation for every open decision in the design decisions register. 9 decisions were recorded: each moved to Decisions made, dated 2026-10-02, with the approved recommendation and its record. trl stays 3; no build or test work was done, and the CAD model, BOM quantities and prices, and pictures were not changed.
+
+### Documents changed
+
+- `docs/06-design-decisions.md` (PHL-DEC-001 v0.2): the nine open decisions moved to Decisions made; Open decisions now reads none; value engineering notes the light pipes and vent take the estimate about USD 2 to 3 over the target
+- `docs/decisions/0003-design-for-construction.md` (PHL-DDR-003 v0.2): A1 to A3 accepted with their fallbacks; Tables 1 and 2 still open for review (no register item asked for them)
+- `docs/decisions/0001-trl2-review-decisions.md` (PHL-DDR-001 v0.3): O1 (first pilot partner) decided
+- `docs/decisions/0002-recommendations-accepted.md` (PHL-DDR-002 v0.2): O1 decided; CityTwin ingest path decided
+- `docs/03-requirements.md` (PHL-REQ-001 v0.6): R13 restated (dates published only when pooled, never pass times); R14 ingest path decided; R15 notes the cost of the light pipes and vent; no status changed
+- `docs/04-calcs/01-sizing.md` (PHL-CAL-001 v0.4): requirement table wording for R13 and R14; no result changed
+- `docs/02-concept.md` (PHL-PRC-001 v0.6): lid light pipes and nameplate, breather vent, clear window renders only, CityTwin path and pooled dates, first pilot partner
+- `docs/01-problem.md` (PHL-PRB-001 v0.6): first pilot partner stated
+- `bom/bom-notes.md`: adopted lid details and vent noted, not yet in the BOM; no quantity or price changed
+- PDFs regenerated with `python3 .kit/render.py`; superseded PDF versions removed by the render.
+
+### Follow-up actions to carry approved decisions into the design
+
+1. Decision 3 (model): Add two sealed light pipe holes in the lid and the two status LEDs with their wires to `cad/src/model.py` and its checks
+2. Decision 4 (model): Add the breather vent hole in the front end wall to `cad/src/model.py` and check its clearance to the modules
+3. Decision 3 (bom): Add the light pipes and LEDs, the breather vent and the nameplate label to `bom/bom.csv` and price them
+4. Decision 3 (calcs): Re-run `sizing.py` for the new total and update R15 in PHL-CAL-001 and PHL-REQ-001 (about USD 2 to 3 over the target)
+5. Decision 3 (drawings): Update the general arrangement PHL-DWG-001 and the lid and box making sketches with the light pipe and vent holes
+6. Decision 3 (pictures): Regenerate the build plan pictures and text for the lid, box drilling and wiring steps with the light pipes, vent and label
+7. Decision 2 (pictures): Keep the clear lid window in the product renders only; check that `cad/src/product_model.py` marks it as a render detail
+8. Decision 6 (docs): Agree the segment file fetch and pooled-date rule with CityTwin's item 6 so the formats match, and write the pooling rule into the server export
+
+### Points found in the review
+
+- There is no open item to accept PHL-DDR-003, yet the register lists it under Decisions made as "open for his review"; add an accept item (recommend accept).
+- Item 6 is already decided on the CityTwin side (CTW-DDR-001, D11, outbound pull); decide it together with CityTwin's item 6 so the formats match.
+- Items 3 and 4 together take the estimate to about $2 to $3 over the $75 target; the register states only the vent's effect.

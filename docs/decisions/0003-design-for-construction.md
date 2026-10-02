@@ -3,9 +3,9 @@ doc_id: PHL-DDR-003
 title: PotholeLog design for construction
 project: PotholeLog
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,12 +13,16 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Changes that make the concept physically buildable, with the reason for each; made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'A1 to A3 accepted by Amish on 2026-10-02 as recommended; Tables 1 and 2 still open for review'
 ---
 
 # 0003: Design for construction
 
 - **Date:** 2026-10-01
-- **Status:** draft. The changes in Table 1 were made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review. The questions in Table 3 are "Proposed, awaiting Amish".
+- **Status:** draft. The changes in Table 1 were made under Amish's 2026-09-30 instruction to make the design physically buildable; they are still open for his review, because no open decision in the register asked for their acceptance (raised in `docs/REVIEW.md`, 2026-10-02). The questions in Table 3 (A1 to A3) were accepted by Amish as recommended on 2026-10-02: "i approve your recommendations for all 555 open decisions." They are recorded in the design decisions register (PHL-DEC-001).
 
 ## Context
 
@@ -53,17 +57,18 @@ The changes keep what the logger does: the same 160 x 110 x 4 mm plate and M6 pa
 | Documents | PHL-CAL-001 v0.3, PHL-PRC-001 v0.5, PHL-REQ-001 v0.5: mass, stiffness, crash and cost figures; R15 restated against the value-engineering target. No requirement changed status. | Follows the model. |
 | Unchanged | Power, hold-up, storage, upload, detection, location and self-heating results; overall height 59 mm; box and plate size. | No change touches them. |
 
-*Table 3. Proposed, awaiting Amish.*
+*Table 3. Proposed, then accepted by Amish as recommended on 2026-10-02.*
 
 | # | Question | Options | Recommendation |
 | --- | --- | --- | --- |
-| A1 | How the four standoff holes and two IMU holes in the box floor are sealed against the plate. | (a) a ring of neutral-cure silicone round each hole under the floor, as modelled; (b) a 1 mm closed-cell foam gasket sheet between the box and the plate. | (a) for the prototype; spray-test at TRL 4 before choosing for a pilot. |
-| A2 | The GNSS module is held by foam tape, which ages in a hot cabin. | (a) acrylic foam tape, as modelled; (b) a small printed clip screwed to two lid pillars. | (a); check adhesion after the TRL 4 heat soak. |
-| A3 | Spanner room at the M6 bolts is 4 mm between washer and box wall (2 mm for a 10 mm socket), so the logger is bolted down as a unit with a ring spanner. | (a) keep the plate and use a ring spanner, as planned; (b) lengthen the plate to 180 mm with the M6 holes 160 mm apart, for socket room (plate mass and first mode change). | (a) for the prototype; review after a TRL 4 trial fitting. |
+| A1 | How the four standoff holes and two IMU holes in the box floor are sealed against the plate. | (a) a ring of neutral-cure silicone round each hole under the floor, as modelled; (b) a 1 mm closed-cell foam gasket sheet between the box and the plate. | (a) for the prototype; spray-test at TRL 4 before choosing for a pilot. Accepted 2026-10-02; the foam gasket is the fallback if the spray test leaks. |
+| A2 | The GNSS module is held by foam tape, which ages in a hot cabin. | (a) acrylic foam tape, as modelled; (b) a small printed clip screwed to two lid pillars. | (a); check adhesion after the TRL 4 heat soak. Accepted 2026-10-02; the printed clip is the fallback if the tape lets go. |
+| A3 | Spanner room at the M6 bolts is 4 mm between washer and box wall (2 mm for a 10 mm socket), so the logger is bolted down as a unit with a ring spanner. | (a) keep the plate and use a ring spanner, as planned; (b) lengthen the plate to 180 mm with the M6 holes 160 mm apart, for socket room (plate mass and first mode change). | (a) for the prototype; review after a TRL 4 trial fitting. Accepted 2026-10-02 (a longer plate would lower the 168 Hz first mode toward R12's 150 Hz limit). |
 
 ## Consequences
 
 - `design_state: constructable` in `project.yaml`. The build plan PHL-BLD-001 shows every component and step in pictures generated from the model (`cad/src/build_plan_media.py`).
 - Requirement status is unchanged: 0 not met, 6 at risk, 2 not verifiable at TRL 3, 4 met on paper, 4 met by design (PHL-CAL-001 v0.3).
 - The photoreal renders (`media/render-*.png`), `media/card.png`, `media/social-preview.png` and the appearance model `cad/src/product_model.py` still show the concept's internal layout (converter beside the controller on the floor, no carrier plate). The outside of the logger is unchanged, so the hero render is still true; the exploded and detail renders need updating on Amish's Mac, where Blender is.
+- With A1 to A3 accepted, the build plan stands as written: silicone rings round the floor holes, the GNSS module on foam tape and the logger bolted down as a unit with a ring spanner.
 - The enclosure, converter, controller, IMU and GNSS parts are chosen at TRL 4; their sizes and hole positions must be checked then, and the carrier holes marked from the parts bought.

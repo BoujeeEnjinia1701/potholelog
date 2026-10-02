@@ -3,9 +3,9 @@ doc_id: PHL-DEC-001
 title: PotholeLog design decisions register
 project: PotholeLog
 doc_type: Design decisions register
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,6 +13,10 @@ revisions:
     date: '2026-10-01'
     author: Amish Chadha
     change: Register opened with the build plan; budget treated as a value-engineering target
+  - version: "0.2"
+    date: '2026-10-02'
+    author: Amish Chadha
+    change: 'Amish approved the recommendations for all nine open decisions on 2026-10-02 (PHL-DDR-003 A1 to A3 accepted); moved to decisions made; value engineering notes the effect of the light pipes and vent'
 ---
 
 # PotholeLog design decisions register
@@ -21,17 +25,7 @@ Every design decision still to be made, and every decision made, in one place. E
 
 ## Open decisions
 
-| # | Decision needed | Options | Recommendation | Affects in the build | Source |
-| --- | --- | --- | --- | --- | --- |
-| 1 | First pilot partner and city, and who provides reference IRI sections | A city road department with a bus or refuse fleet; the Helpful Engineering network could help find one | None yet | Not the bench build; needed before any vehicle fitting | PHL-DDR-001, O1; PHL-DDR-002 |
-| 2 | Clear window in the lid over the GNSS antenna (shown in the product renders) | (a) renders only; (b) choose a stock box with a clear lid | Keep it for the renders only, or (b) if a visible antenna is wanted; reception is fine through either | Lid part (BOM line 2) | REVIEW 2026-09-26, item 1 |
-| 3 | Two status light pipes (power and logging) in the lid | (a) adopt; (b) leave out | (a): a driver can see the logger is running, for well under $1 | Two holes in the lid, two LEDs and wires; a lid change to the build plan | REVIEW 2026-09-26, item 2 |
-| 4 | Pressure-equalising breather vent on the front end wall | (a) adopt, about $2 to $3; (b) leave out | (a), to limit condensation in a sealed box that heats and cools daily; it would take the estimated cost about $1 to $2 over the value-engineering target | One more hole in the box and one bought part | REVIEW 2026-09-26, item 3 |
-| 5 | Nameplate label with a forward arrow | (a) adopt as a printed label; (b) leave out | (a): it tells the installer which way the IMU axes face | A label on the lid; no change to the parts inside | REVIEW 2026-09-26, item 4 |
-| 6 | How CityTwin receives the operator's daily segment files, and whether a daily publication date fits R13 | (a) CityTwin fetches from the operator's server; (b) the operator passes them on by another route | None yet; to agree with CityTwin | Not the build; data path only | PHL-DDR-002, cross-repo actions |
-| 7 | How the six floor holes are sealed against the plate | (a) a ring of neutral-cure silicone round each hole, as planned; (b) a 1 mm closed-cell foam gasket sheet between box and plate | (a) for the prototype; spray-test at TRL 4 before choosing for a pilot | Step 2 of the build plan | PHL-DDR-003, A1 |
-| 8 | How the GNSS module is held under the lid | (a) acrylic foam tape, as planned; (b) a small printed clip screwed to two lid pillars | (a); check adhesion after the TRL 4 heat soak | Step 7 of the build plan | PHL-DDR-003, A2 |
-| 9 | Spanner room at the M6 corner bolts (4 mm washer to box; 2 mm for a 10 mm socket) | (a) keep the plate and bolt the logger down as a unit with a ring spanner, as planned; (b) lengthen the plate to 180 mm with the M6 holes 160 mm apart | (a) for the prototype; review after a TRL 4 trial fitting | Mounting plate and step 9 | PHL-DDR-003, A3; PHL-CAL-001 [I4] |
+None. All open decisions were decided on 2026-10-02.
 
 ## To confirm when parts are bought
 
@@ -51,6 +45,7 @@ Value-engineering target: USD 75 (a hypothetical control target, not a limit). E
 
 - The largest lines are the GNSS module (USD 15), the controller (USD 10), the 60 V converter with its protection (USD 9) and the enclosure (USD 8); the plate, IMU and memory card are USD 6 each.
 - Making the design constructable added the carrier plate (USD 2.00) and the box fixing kit (USD 1.50) and moved USD 0.50 of hardware out of line 11: from USD 71.00 to USD 74.00.
+- Adopted on 2026-10-02 but not yet in the BOM: the two status light pipes (decision 3, well under USD 1) and the breather vent (decision 4, about USD 2 to 3). Together they take the estimate to about USD 2 to 3 over the target.
 - Savings worth trying: cut the plate and carrier from offcuts; a 16 GB card still holds about 66 to 80 days of raw data against the 30 days needed (about USD 2 less); GNSS modules of the same class vary widely in price; buying the standoffs, screws and lead parts in packs lowers the per-unit hardware cost.
 
 ## Decisions made
@@ -61,3 +56,12 @@ Value-engineering target: USD 75 (a hypothetical control target, not a limit). E
 | 2026-09-25 | N1: a 60 V-rated converter, with `budget_usd` raised from $70 to $75 | Amish, same instruction | PHL-DDR-002 |
 | 2026-09-25 | N2: R5 defect-detection range 10 to 30 km/h with repeat slow passes; 300 mm reference defect kept | Amish, same instruction | PHL-DDR-002 |
 | 2026-10-01 | Design for construction: hex standoffs, carrier plate, module layout, gland locknut, IMU screwed into the plate, GNSS on foam tape, modelled lid pillars | Made under Amish's 2026-09-30 instruction to make the design physically buildable ("fix the design assumptions to match and be physically feasible as you draw the illustrations"); open for his review | PHL-DDR-003 |
+| 2026-10-02 | First pilot partner (first candidate to approach): a Dallas-Fort Worth area city with its own bus or refuse fleet, with TxDOT pavement management roughness data on state roads in that city as the reference IRI sections | Amish: "i approve your recommendations for all 555 open decisions." | PHL-DDR-001, O1; PHL-DDR-002 |
+| 2026-10-02 | Clear lid window over the GNSS antenna shown in the renders only (option a); the build keeps the opaque lid | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 1 |
+| 2026-10-02 | Two sealed status light pipes in the lid, for power and logging, adopted (option a); the two lid holes are sealed like the others | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 2 |
+| 2026-10-02 | Pressure-equalizing breather vent on the front end wall adopted (option a) | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 3 |
+| 2026-10-02 | Printed nameplate label with a forward arrow adopted (option a) | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 4 |
+| 2026-10-02 | Segment files to CityTwin: CityTwin fetches the daily segment files from the operator's server (option a, matching CityTwin's outbound pull, CTW-DDR-001 D11); a date per segment may be published but never pass times, and only once at least two vehicles or several days are pooled | Amish: "i approve your recommendations for all 555 open decisions." | PHL-DDR-002, cross-repo actions |
+| 2026-10-02 | Floor holes sealed with a ring of neutral-cure silicone round each hole for the prototype (option a), spray-tested at TRL 4 before a pilot; the foam gasket is the fallback if the spray test leaks | Amish: "i approve your recommendations for all 555 open decisions." | PHL-DDR-003, A1 |
+| 2026-10-02 | GNSS module held by acrylic foam tape (option a), with adhesion checked after the TRL 4 heat soak; the printed clip is the fallback if the tape lets go | Amish: "i approve your recommendations for all 555 open decisions." | PHL-DDR-003, A2 |
+| 2026-10-02 | Keep the 160 mm plate and bolt the logger down as a unit with a ring spanner for the prototype (option a); review after a TRL 4 trial fitting | Amish: "i approve your recommendations for all 555 open decisions." | PHL-DDR-003, A3; PHL-CAL-001 [I4] |
