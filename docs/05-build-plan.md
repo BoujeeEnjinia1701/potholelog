@@ -3,9 +3,9 @@ doc_id: PHL-BLD-001
 title: PotholeLog prototype build plan
 project: PotholeLog
 doc_type: Build plan
-version: "0.1"
+version: "0.3"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,6 +13,14 @@ revisions:
     date: '2026-10-01'
     author: Amish Chadha
     change: First build plan; design made constructable (PHL-DDR-003)
+  - version: "0.2"
+    date: '2026-10-02'
+    author: Amish Chadha
+    change: "Section 2: the changes recorded in PHL-DDR-003 accepted by Amish on 2026-10-02"
+  - version: "0.3"
+    date: '2026-10-02'
+    author: Amish Chadha
+    change: "Status light pipes and LEDs, breather vent and nameplate label (decisions of 2026-10-02) added: lid drilling sketch PHL-DWG-104, joints 7 and 8, new step 7, wiring, bought parts and first checks; pictures regenerated"
 ---
 
 # PotholeLog prototype build plan
@@ -25,13 +33,13 @@ revisions:
 
 *Figure 1. Every component pulled apart and numbered in build order.*
 
-The prototype is one PotholeLog on a bench board that stands in for the vehicle floor: a grey plastic box, 120 x 90 x 55 mm, on a 4 mm aluminium plate that bolts down at its four corners. Inside, a small motion sensor (the IMU) is screwed through the box floor into the plate, so it feels exactly what the plate feels, and an aluminium carrier plate above it holds the power converter, the hold-up capacitor and the controller. The position module (GNSS) sits under the plastic lid, where it sees the sky. Figure 1 shows the 14 components in the order you make or fit them. Three are made in a small workshop: the mounting plate, the carrier plate and the drilling of the bought box. Everything else is bought and fitted: the box and lid, cable gland, hex standoffs, electronic modules, memory card, fused lead and bolts. The work is sawing, drilling, tapping and filing aluminium sheet, drilling a plastic box, and wiring bought modules together at screw terminals and plugs. The parts cost about $74 from the bill of materials.
+The prototype is one PotholeLog on a bench board that stands in for the vehicle floor: a grey plastic box, 120 x 90 x 55 mm, on a 4 mm aluminium plate that bolts down at its four corners. Inside, a small motion sensor (the IMU) is screwed through the box floor into the plate, so it feels exactly what the plate feels, and an aluminium carrier plate above it holds the power converter, the hold-up capacitor and the controller. The position module (GNSS) sits under the plastic lid, where it sees the sky. Two sealed light pipes in the lid show power and logging, a breather vent in the front end wall lets the box breathe without letting water in, and a nameplate label on the lid carries an arrow that must point forward. Figure 1 shows the 17 components in the order you make or fit them. Three are made in a small workshop: the mounting plate, the carrier plate and the drilling of the bought box and its lid. Everything else is bought and fitted: the box and lid, cable gland, breather vent, hex standoffs, electronic modules, light pipes and their LEDs, memory card, fused lead, label and bolts. The work is sawing, drilling, tapping and filing aluminium sheet, drilling a plastic box, and wiring bought modules together at screw terminals and plugs. The parts cost about $77.50 from the bill of materials.
 
 > **Safety:** The logger runs from a vehicle's 12 V or 24 V supply. On the bench, power it only from a bench supply with a 2 A fuse in the lead and the current limit set to 0.5 A; never from a vehicle until the stops of section 6 are passed. The hold-up capacitor stays charged for a short time after power is removed: do not short its terminals. Cut aluminium edges are sharp; deburr everything. Installing on a vehicle is outside this plan.
 
 ## 2. What changed to make it buildable
 
-The concept showed what the logger does; some of its parts overlapped or had no fixing. Each change below keeps what the logger does, and all of them are recorded in decision record PHL-DDR-003, open for Amish's review.
+The concept showed what the logger does; some of its parts overlapped or had no fixing. Each change below keeps what the logger does, and all of them are recorded in decision record PHL-DDR-003, accepted by Amish on 2026-10-02.
 
 *Table 1. Changes from the concept.*
 
@@ -82,9 +90,9 @@ Make and check each component before the assembly step that needs it. Sizes are 
 
 ![Figure 4. Drilling layout of the floor and the rear end wall](05-build-plan/box-holes.png)
 
-*Figure 4. Floor holes and the gland hole in the rear end wall.*
+*Figure 4. Floor holes, the gland hole in the rear end wall and the vent hole in the front end wall.*
 
-**What it is and what it is made from.** A bought grey polycarbonate box, 120 x 90 x 55 mm with its lid, rated IP65, with four moulded pillars in its corners for the lid screws. Six holes are drilled in its floor and one in its rear end wall.
+**What it is and what it is made from.** A bought grey polycarbonate box, 120 x 90 x 55 mm with its lid, rated IP65, with four moulded pillars in its corners for the lid screws. Six holes are drilled in its floor, one in its rear end wall and one in its front end wall.
 
 **How to make it.**
 
@@ -92,7 +100,8 @@ Make and check each component before the assembly step that needs it. Sizes are 
 2. From inside the box, drill through the plate's four standoff holes and two IMU holes with a 2.5 mm drill, just deep enough to mark the plate's holes through the floor. Unclamp.
 3. Open the four standoff holes in the floor to 4.5 mm and the two IMU holes to 3.5 mm with a step drill, at low speed and light pressure, with a block of wood under the floor.
 4. Rear end wall: cover it with masking tape, mark a point 10 mm left of the centre and 20 mm up from the box's underside, pilot 3 mm, and open to 16.2 mm with the step drill. Check the size against the gland's datasheet before the last step.
-5. Deburr inside and out. Clean with water and mild soap only; solvents craze polycarbonate.
+5. Front end wall: tape it, mark a point on the centre line 30 mm up from the box's underside, pilot 3 mm and open to 12.2 mm with the step drill, checking the size against the vent's datasheet.
+6. Deburr inside and out. Clean with water and mild soap only; solvents craze polycarbonate.
 
 **How it fits the parts next to it.**
 
@@ -100,7 +109,11 @@ Make and check each component before the assembly step that needs it. Sizes are 
 
 *Figure 5. The gland's body and seal sit outside the wall; its locknut is inside, 4.5 mm clear of the carrier plate.*
 
-The gland goes in from outside with its sealing washer against the wall and its locknut inside (step 1). The floor sits flat on the plate; a ring of neutral-cure silicone under each floor hole seals it (step 2).
+![Figure 5a. Joint 8: breather vent in the front end wall](05-build-plan/joint-08.png)
+
+*Figure 5a. The vent's membrane cap and O-ring sit outside the front wall; its locknut is inside, 8.5 mm clear of the converter.*
+
+The gland goes in from outside with its sealing washer against the wall and its locknut inside, and the breather vent goes into the front wall the same way (step 1). The floor sits flat on the plate; a ring of neutral-cure silicone under each floor hole seals it (step 2).
 
 **Check before moving on.** No crack runs out from any hole under a bright lamp; with the box clamped back on the plate, every floor hole lines up with its plate hole.
 
@@ -162,7 +175,8 @@ Wire it like this, with stranded copper and a ferrule on every screw terminal:
 4. Supply sense: a 10 k and a 20 k resistor in series from the converter's 5 V output (before the blocking diode) to ground; the joint between them to a controller input pin: 0.25 mm² (24 AWG).
 5. IMU to the controller's 3.3 V, ground and I2C pins with its plug-in lead, up through the carrier window: 0.25 mm².
 6. GNSS plug-in lead (3.3 V, ground, transmit, receive and the timing pulse) to the controller, long enough to set the lid down beside the box: 0.25 mm².
-7. Put the microSD card in the controller's slot.
+7. Status lights: each LED has its series resistor soldered in one leg and sleeved; both LEDs share a ground. Their plug lead goes to two controller output pins and ground, long enough to set the lid down beside the box: 0.25 mm².
+8. Put the microSD card in the controller's slot.
 
 **Check before moving on.** Every wire continues end to end; with no power connected, the converter input reads open between live and ground; every wire is labelled.
 
@@ -172,7 +186,7 @@ Wire it like this, with stranded copper and a ferrule on every screw terminal:
 
 *Figure 10. A 22 x 22 mm pad of foam tape holds the module flat under the lid top.*
 
-**What to buy and how it fits.** A u-blox M10 class GNSS module, no larger than 28 x 28 mm, with its patch antenna on top, a timing-pulse output and a plug-in lead. It goes under the lid top, 25 mm toward the rear and 20 mm left of the centre, above the controller, held by a 22 x 22 mm pad of 1 mm acrylic foam tape (step 7). Keep metal, labels and the lid screws away from the area above the antenna.
+**What to buy and how it fits.** A u-blox M10 class GNSS module, no larger than 28 x 28 mm, with its patch antenna on top, a timing-pulse output and a plug-in lead. It goes under the lid top, 25 mm toward the rear and 20 mm left of the centre, above the controller, held by a 22 x 22 mm pad of 1 mm acrylic foam tape (step 8). Keep metal, labels and the lid screws away from the area above the antenna.
 
 **Check before moving on.** The module does not move when pushed sideways with a finger.
 
@@ -186,11 +200,36 @@ Wire it like this, with stranded copper and a ferrule on every screw terminal:
 
 **Check before moving on.** The gasket sits in its groove all the way round, with no wire across it.
 
-### 3.8 Bought components
+### 3.8 Lid drilling, status light pipes and nameplate label
+
+![Figure 11a. Drilling sketch of the lid](../cad/drawings/PHL-DWG-104.png)
+
+*Figure 11a. Lid drilling sketch (PHL-DWG-104).*
+
+**What it is and what it is made from.** The bought box's opaque lid, drilled with two holes for sealed light pipes, and a printed label stuck on its top.
+
+**How to make it.**
+
+1. Cover the lid top with masking tape and mark both centre lines.
+2. Mark two points 30 mm to the right of the long centre line, one 40 mm and one 30 mm toward the rear (gland) end from the cross centre line. The rear one is the power light, the front one the logging light.
+3. Pilot 3 mm with a block of wood under the lid, then open both holes to 6.4 mm with the step drill, checking the size against the light pipe's datasheet.
+4. Deburr, and clean with water and mild soap only.
+
+**How it fits the parts next to it.**
+
+![Figure 11b. Joint 7: status light pipe in the lid](05-build-plan/joint-07.png)
+
+*Figure 11b. Each light pipe seals under its flange outside and is held by a nut inside; its LED plugs into the back of the pipe.*
+
+Each light pipe goes in from outside with its O-ring under the flange and its nut inside, clear of the corner pillars; the LED plugs into the back of the pipe (step 7). The nameplate label, 54 x 34 mm, goes on the lid top centred 26 mm forward of the centre with its arrow pointing forward, well away from the area above the GNSS antenna.
+
+**Check before moving on.** No crack runs from either hole; both pipes are tight in the lid and do not turn by hand.
+
+### 3.9 Bought components
 
 Buy to specification, not brand. Line numbers are those of the bill of materials.
 
-- **Enclosure base and lid (lines 2 and 3).** Polycarbonate or ABS, IP65 or better, 120 x 90 x 55 mm outside, flat floor, four moulded corner pillars and lid screws, gasketed lid.
+- **Enclosure base and lid (lines 2 and 3).** Polycarbonate or ABS, IP65 or better, 120 x 90 x 55 mm outside, flat floor, four moulded corner pillars and lid screws, gasketed opaque lid.
 - **DC-DC converter (line 4).** 9 to 60 V input (60 V rated), 5 V 1 A output, about 30 x 40 mm with four mounting holes; a 36 V-class transient suppressor and a reverse-polarity diode on its input.
 - **Hold-up capacitor (line 5).** 1 F, 5.5 V, about 16 mm across and 20 mm tall, rated to 70 °C or more, with a 10 ohm resistor, a bypass diode and a Schottky blocking diode.
 - **Controller (line 6).** ESP32-S3 board with Wi-Fi and a microSD slot, no larger than about 52 x 26 mm, module rated to 85 °C.
@@ -198,17 +237,20 @@ Buy to specification, not brand. Line numbers are those of the bill of materials
 - **Cable gland and fused lead (line 9).** M16 IP68 nylon gland for 4 to 8 mm cable; 2 m two-core lead, inline 2 A blade fuse holder, fuse tap and ring terminals.
 - **microSD card (line 10).** 32 GB high-endurance, rated -25 to 85 °C.
 - **Hardware (line 11).** Four M6 x 20 bolts, property class 8.8, with washers and nyloc nuts (for the bench board, M6 x 30); hook-up wire 0.5 and 0.25 mm²; two resistors; heat shrink; cable ties.
+- **Status light pipes and LEDs (line 14).** Two sealed panel-mount light pipes for a 6.4 mm hole, about 10 mm long, with O-ring, nut and a rear socket for a 5 mm LED; a green and a blue-green 5 mm LED, each with its series resistor; a two-way plug lead.
+- **Breather vent (line 15).** M12 x 1.5 screw-in pressure-equalizing vent with a membrane, IP67 or better, with O-ring and locknut.
+- **Nameplate label (line 16).** 54 x 34 mm laminated polyester label with outdoor-rated adhesive, printed with the name, a forward arrow and a contact line.
 - **Box fixing kit (line 13).** Four M4 hex standoffs as section 3.3; four M4 x 6 pan-head screws; two M3 x 8 pan-head screws; eight 6 mm M3 nylon standoffs with screws; a 22 x 22 mm pad of 1 mm acrylic foam tape; neutral-cure silicone sealant.
 
 ## 4. Putting it together
 
 In each picture the parts already fitted are grey and the part being fitted is in colour, with an arrow showing the way it goes in.
 
-### Step 1: cable gland into the rear end wall
+### Step 1: cable gland and breather vent into the end walls
 
 ![Step 1](05-build-plan/step-01.png)
 
-Gland body and sealing washer outside, locknut inside, tightened to the gland maker's torque. Leave the dome nut loose until step 6.
+Gland body and sealing washer outside the rear wall, locknut inside, tightened to the gland maker's torque. Leave the dome nut loose until step 6. Breather vent into the front wall the same way: O-ring outside, locknut inside, hand tight plus the turn its maker gives.
 
 ### Step 2: box onto the plate with four hex standoffs
 
@@ -240,21 +282,27 @@ Feed the IMU lead up through the window, lower the carrier onto the standoff top
 
 Pass the lead through the gland, strip it, crimp ferrules and connect it to the converter's input terminals, live and ground as marked. Leave about 40 mm of slack inside, then tighten the gland's dome nut on the lead. **Hold point:** the fuse holder at the far end of the lead has no fuse in it.
 
-### Step 7: GNSS module under the lid
+### Step 7: light pipes and nameplate onto the lid
 
 ![Step 7](05-build-plan/step-07.png)
 
-Clean the inside of the lid top with isopropyl alcohol and let it dry. Stick the tape pad to the module's underside, then press the module onto the lid, antenna toward the lid, for 30 seconds.
+Push each light pipe into its hole from outside, O-ring under the flange, and tighten its nut inside by hand plus a quarter turn. Push the power LED into the rear pipe's socket and the logging LED into the front one. Clean the lid top with isopropyl alcohol, let it dry, and stick the label on with its arrow pointing forward.
 
-### Step 8: close the lid
+### Step 8: GNSS module under the lid
 
 ![Step 8](05-build-plan/step-08.png)
 
-Plug the GNSS lead into the controller. Check the gasket is clean and seated with no wire across it, and tighten the four lid screws evenly in a cross pattern.
+Clean the inside of the lid top with isopropyl alcohol and let it dry. Stick the tape pad to the module's underside, then press the module onto the lid, antenna toward the lid, for 30 seconds.
 
-### Step 9: onto the bench board for the first checks
+### Step 9: close the lid
 
 ![Step 9](05-build-plan/step-09.png)
+
+Plug the GNSS lead and the status light lead into the controller. Check the gasket is clean and seated with no wire across it, and tighten the four lid screws evenly in a cross pattern.
+
+### Step 10: onto the bench board for the first checks
+
+![Step 10](05-build-plan/step-10.png)
 
 ![Figure 12. Joint 6: M6 corner bolt beside the box](05-build-plan/joint-06.png)
 
@@ -270,15 +318,16 @@ These are the checks a TRL 4 test report would record; this plan only lists them
 
 | Check | Requirement | How | Pass when |
 | --- | --- | --- | --- |
-| Fit and seal | R11 | Look at the gasket, gland and floor holes under a lamp; tug the lead | Gasket seated all round; silicone ring visible round every floor hole; the lead does not move in the gland |
+| Fit and seal | R11 | Look at the gasket, gland, vent, light pipes and floor holes under a lamp; tug the lead | Gasket seated all round; silicone ring visible round every floor hole; vent and light pipes tight with O-rings seated; the lead does not move in the gland |
 | Supply polarity and current | R9 | Bench supply at 12 V, current limit 0.5 A, 2 A fuse in the lead; then reversed for 5 s | About 45 mA when running; no current and no damage when reversed |
 | Supply range | R9 | Bench supply at 9 V, 24 V and 32 V | Runs at each; current falls as voltage rises (about 22 mA at 24 V) |
 | Hold-up and clean shutdown | R10 | Running and logging, switch the supply off; repeat 20 times | The controller closes its files every time; the card reads without errors on a computer |
+| Status lights | PHL-DEC-001 | Power up; start and stop logging | Power light on whenever powered; logging light shows logging, both visible through the lid in room light |
 | Sampling | R6 | Read the IMU and GNSS rates from the logged file with the board still | IMU at 400 Hz or more, GNSS at 5 Hz or more with the timing pulse present |
 | Sensor coupling | R6 | Tap the bench board near the logger with a small hammer | A sharp vertical spike in the logged data with no ringing longer than about 20 ms |
 | GNSS fix through the lid | R4 | Lid closed, by a window or outdoors | A position fix within the module maker's stated time |
 | Upload | R8 | Ignition-on signal from the bench supply within range of a test Wi-Fi network | The day's summary file arrives on the test server |
-| Mass | R12 | Weigh the logger without the lead | About 0.43 kg |
+| Mass | R12 | Weigh the logger without the lead | About 0.44 kg |
 
 ## 6. Safety stops
 
@@ -303,9 +352,10 @@ Stop at each point. Carry on only when everything listed is true.
 ## 8. Where the numbers come from
 
 - Model and constructability checks: `cad/src/model.py` (`python cad/src/model.py --check`); STEP and STL exports in `cad/step/` and `cad/stl/`.
-- Pictures: `cad/src/build_plan_media.py`, using `.kit/build_views.py`; written to `docs/05-build-plan/` and `cad/drawings/PHL-DWG-101` to `PHL-DWG-103`.
-- General arrangement: `cad/drawings/PHL-DWG-001.pdf`, Rev P3.
-- Calculations: `docs/04-calcs/01-sizing.md` (PHL-CAL-001 v0.3) and `docs/04-calcs/sizing.py`; power and supply current [F1], [F2], hold-up [G1], mass [H2], fixings [H3], plate stiffness [I1], spanner room [I4].
-- Bill of materials: `bom/bom.csv`.
+- Pictures: `cad/src/build_plan_media.py`, using `.kit/build_views.py`; written to `docs/05-build-plan/` and `cad/drawings/PHL-DWG-101` to `PHL-DWG-104`.
+- General arrangement: `cad/drawings/PHL-DWG-001.pdf`, Rev P4.
+- Calculations: `docs/04-calcs/01-sizing.md` (PHL-CAL-001 v0.5) and `docs/04-calcs/sizing.py`; power and supply current [F1], [F2], hold-up [G1], mass [H2], fixings [H3], plate stiffness [I1], spanner room [I4].
+- Bill of materials: `bom/bom.csv` (16 lines).
+- Decisions of 2026-10-02 (light pipes, vent, label): `docs/06-design-decisions.md` (PHL-DEC-001).
 - Decisions: `docs/decisions/0003-design-for-construction.md` (PHL-DDR-003), with PHL-DDR-001 and PHL-DDR-002.
-- Requirements: `docs/03-requirements.md` (PHL-REQ-001 v0.5).
+- Requirements: `docs/03-requirements.md` (PHL-REQ-001 v0.7).

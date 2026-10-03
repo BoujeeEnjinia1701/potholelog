@@ -3,7 +3,7 @@ doc_id: PHL-REQ-001
 title: PotholeLog requirements
 project: PotholeLog
 doc_type: Requirements
-version: "0.6"
+version: "0.7"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -33,11 +33,15 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: 'Decisions of 2026-10-02 (PHL-DEC-001): R13 restated for published dates (pooled, never pass times); R14 CityTwin ingest path decided; R15 notes the cost of the adopted light pipes and vent. No status changed'
+- version: "0.7"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Approved follow-ups carried out (PHL-CAL-001 v0.5): light pipes and LEDs, breather vent and nameplate label in the BOM; R15 moves from met on paper to not met (USD 77.50, USD 2.50 over the target)'
 ---
 
 # PotholeLog requirements
 
-These requirements are checked by calculation in PHL-CAL-001 v0.3. Targets are unchanged from v0.2 except R16, redefined for this build under PHL-DDR-001 (D1), and R5, whose defect-detection range is restated as 10 to 30 km/h under PHL-DDR-002 (N2). Both were decided by Amish on 2026-09-25 (go with recommendation). The status column gives the result on paper: "met on paper" means a calculation shows the target is met under the stated assumptions; "met by design" means the chosen parts and architecture meet it; "not verifiable at TRL 3" means only data from a vehicle can show it.
+These requirements are checked by calculation in PHL-CAL-001 v0.5. Targets are unchanged from v0.2 except R16, redefined for this build under PHL-DDR-001 (D1), and R5, whose defect-detection range is restated as 10 to 30 km/h under PHL-DDR-002 (N2). Both were decided by Amish on 2026-09-25 (go with recommendation). The status column gives the result on paper: "met on paper" means a calculation shows the target is met under the stated assumptions; "met by design" means the chosen parts and architecture meet it; "not verifiable at TRL 3" means only data from a vehicle can show it.
 
 Table 1. Requirements.
 
@@ -57,7 +61,7 @@ Table 1. Requirements.
 | R12 | Install quickly and safely | 30 min or less by a fleet mechanic; no cutting or welding of structural members; bracket first natural frequency above 150 Hz | At risk: 30 min task estimate at the limit; plate first mode 168 Hz met on paper (constructable design, PHL-DDR-003) | Design review |
 | R13 | Protect privacy | No camera or microphone; published data limited to road-segment roughness and defect locations, with no vehicle tracks, timestamps or driver identity; no driver scoring. A date per segment may be published, never pass times, and only once at least two vehicles or several days are pooled (PHL-DEC-001, 2026-10-02) | Met by design (privacy rule D7) | Design review; data schema review |
 | R14 | Open outputs | CSV and GeoJSON outputs that CityTwin and common GIS tools can read | Met by design (format D6); CityTwin fetches the segment files from the operator's server (PHL-DEC-001, 2026-10-02) | Sample export |
-| R15 | Low cost and buildable | Parts cost against the $75 value-engineering target (a hypothetical control target, raised from $70 under PHL-DDR-002, N1); off-the-shelf modules; no custom PCB | Met on paper ($74.00, $1.00 under the target) | Priced BOM |
+| R15 | Low cost and buildable | Parts cost against the $75 value-engineering target (a hypothetical control target, raised from $70 under PHL-DDR-002, N1); off-the-shelf modules; no custom PCB | Not met ($77.50, $2.50 over the target) | Priced BOM |
 | R16 | Fit the fleet types in this build | Buses and refuse trucks; a bicycle variant is deferred to a later step (PHL-DDR-001, D1) | Met by design for buses and refuse trucks; bicycles are not served by this build | Design review |
 
 ## Requirements not met or at risk
@@ -68,7 +72,7 @@ Table 1. Requirements.
 - **R4 at risk** in dense urban streets, where GNSS errors repeat between passes.
 - **R11 and R12 at risk.** Part temperature grades, vibration loosening and the 30 min installation are all at their limits.
 - **R2 and R3 not verifiable at TRL 3.** Both need field data and a calibration partner with reference IRI sections.
-- **R15.** Value-engineering target: USD 75. Estimated cost of the constructable design: USD 74.00 (USD 1.00 under the target), after the 60 V converter (PHL-DDR-002) and the carrier plate and box fixing kit added for construction (PHL-DDR-003). A cellular option would take it over the target. The status light pipes and breather vent adopted on 2026-10-02 (PHL-DEC-001) are not yet in the BOM; together they would take the estimate about USD 2 to 3 over the target.
+- **R15 not met.** Value-engineering target: USD 75. Estimated cost of the constructable design: USD 77.50 (USD 2.50 over the target), after the 60 V converter (PHL-DDR-002), the carrier plate and box fixing kit added for construction (PHL-DDR-003), and the status light pipes and LEDs, breather vent and nameplate label adopted by Amish on 2026-10-02 (PHL-DEC-001, BOM lines 14 to 16, USD 3.50 together). The savings in the design decisions register could close the gap. A cellular option would take it further over.
 - **Bicycles.** The pitch still names bikes, but this build serves buses and refuse trucks only (R16 as redefined).
 
 ## Assumptions

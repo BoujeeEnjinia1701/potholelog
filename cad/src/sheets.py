@@ -1,4 +1,5 @@
-"""PotholeLog general arrangement sheet PHL-DWG-001, Rev P3 (TRL 3, constructable design PHL-DDR-003).
+"""PotholeLog general arrangement sheet PHL-DWG-001, Rev P4 (TRL 3, constructable design PHL-DDR-003,
+with the light pipes, breather vent and nameplate adopted on 2026-10-02).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/PHL-DWG-001.svg, .pdf and .png from the parametric model in
@@ -14,7 +15,7 @@ sys.path[:0] = [str(ROOT / ".kit"), str(ROOT / "cad" / "src")]
 from drawing import Sheet, _viewbox, _t, M, TB_Y, INK, MUTED  # noqa: E402
 from model import PARAMS as P, assembly, derived  # noqa: E402
 
-DATE = "2026-10-01"
+DATE = "2026-10-02"
 DWG = "PHL-DWG-001"
 
 
@@ -99,12 +100,13 @@ def main():
     asm = assembly()
     views = safe_project_views(asm, work)
     bb = asm.bounding_box()
-    s = Sheet(project="PotholeLog", title="General arrangement", dwg_no=DWG, rev="P3",
+    s = Sheet(project="PotholeLog", title="General arrangement", dwg_no=DWG, rev="P4",
               author="Amish Chadha", date=DATE, scale=None, theme="technical",
               material="Al 5052 plate; stock IP65 box; bought-in parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", "2026-09-25", "AC"),
                          ("P2", "Supply note: 60 V converter (PHL-DDR-002)", "2026-09-25", "AC"),
-                         ("P3", "Constructable design: standoffs, carrier, IMU screws (PHL-DDR-003)", DATE, "AC")])
+                         ("P3", "Constructable design: standoffs, carrier, IMU screws (PHL-DDR-003)", "2026-10-01", "AC"),
+                         ("P4", "Light pipes, breather vent, nameplate (PHL-DEC-001)", DATE, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(s, views)
@@ -129,6 +131,9 @@ def main():
                 Z(D["overall_h"] + 18), "M16 GLAND, FUSED LEAD TO IGNITION FEED", "end")
     L += leader(X(P["gnss_xy"][0]), Z(D["overall_h"] - P["wall"] - 2), X(P["gnss_xy"][0]) + 10, Z(D["overall_h"] + 18),
                 "GNSS UNDER LID, SKY VIEW UP")
+    vy, vz = P["vent_yz"]
+    L += leader(X(bl / 2 + P["vent"][2] / 2), Z(pt + vz), X(bl / 2) + 2, Z(D["overall_h"] + 34),
+                f"M12 BREATHER VENT, {P['vent'][0]:g} HOLE IN FRONT WALL")
 
     # top view (from +Z): X to the right, Y up the sheet
     x, y, w, h = c["top"]
@@ -147,6 +152,11 @@ def main():
     L += leader(Xt(-hx / 2), Yt(-hy / 2), Xt(-pl / 2) - 6, Yt(-pw / 2) + 5,
                 f"4 x {P['hole_d']} THRU FOR M6, LOCKING NUTS", "end")
     L.append(_t(Xt(pl / 2) + 20, Yt(0) + 1, "FORWARD +X", 2.0, 600, MUTED, "start"))
+    (lx0, ly0), (lx1, _) = P["light_pipe_xy"]
+    L += leader(Xt(lx0), Yt(ly0), Xt(-pl / 2) - 6, Yt(-pw / 2) - 4,
+                f"2 x {P['light_pipe'][0]:g} LIGHT PIPE HOLES IN LID, SEALED", "end")
+    L += leader(Xt(P["label_xy"][0]), Yt(P["label_xy"][1]), Xt(pl / 2) + 14, Yt(-pw / 2) - 4,
+                "NAMEPLATE LABEL, ARROW FORWARD")
 
     # right view (from +X): +Y to the right, Z up
     x, y, w, h = c["right"]
@@ -162,11 +172,11 @@ def main():
         f"Plate Al 5052 {pl:.0f} x {pw:.0f} x {pt:.0f}; 4 x M6 on {hx:.0f} x {hy:.0f}",
         f"Stock IP65 box {bl:.0f} x {bw:.0f} x {D['box_h']:.0f}; 4 x M4 hex standoffs into plate on {P['box_screw_pitch'][0]:.0f} x {P['box_screw_pitch'][1]:.0f}",
         f"Modules on a {P['carrier'][0]:.0f} x {P['carrier'][1]:.0f} x {P['carrier'][2]:g} Al carrier on the standoffs",
-        f"Overall height {D['overall_h']:.0f} on the floor; logger about 0.43 kg",
+        f"Overall height {D['overall_h']:.0f} on the floor; logger about 0.44 kg",
         "Bolt at existing floor, seat-rail or crossmember fixings",
         "Plate first mode about 168 Hz on corner bolts (PHL-CAL-001)",
         "IMU on box floor, 2 x M3 into plate; X axis forward",
-        "GNSS under the plastic lid; keep metal off the lid",
+        "GNSS under lid; 2 light pipes in lid; M12 vent in front wall",
         "Supply 9 to 36 V, converter rated 60 V; fused 2 A, ignition switched; 0.54 W",
         "Third-angle; front view from -Y; X forward along the vehicle",
     ], x=276, y=158, width=140)

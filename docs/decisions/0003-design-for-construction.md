@@ -3,7 +3,7 @@ doc_id: PHL-DDR-003
 title: PotholeLog design for construction
 project: PotholeLog
 doc_type: Design decision record
-version: "0.2"
+version: "0.3"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -17,12 +17,16 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: 'A1 to A3 accepted by Amish on 2026-10-02 as recommended; Tables 1 and 2 still open for review'
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Tables 1 and 2 accepted by Amish on 2026-10-02"
 ---
 
 # 0003: Design for construction
 
 - **Date:** 2026-10-01
-- **Status:** draft. The changes in Table 1 were made under Amish's 2026-09-30 instruction to make the design physically buildable; they are still open for his review, because no open decision in the register asked for their acceptance (raised in `docs/REVIEW.md`, 2026-10-02). The questions in Table 3 (A1 to A3) were accepted by Amish as recommended on 2026-10-02: "i approve your recommendations for all 555 open decisions." They are recorded in the design decisions register (PHL-DEC-001).
+- **Status:** accepted. Amish, 2026-10-02: "APPROVED: Design-for-construction changes in 10 repos (CityTwin, CoolShade, PalletPilot, Heliolite, PotholeLog, EarthPress, ReadyKit, CellCheck, CargoMule and ThermaCart)". This covers the changes P1 to P7 in Table 1 and the knock-on changes in Table 2, made under Amish's 2026-09-30 instruction to make the design physically buildable, and is recorded in the design decisions register (PHL-DEC-001). The questions in Table 3 (A1 to A3) were accepted by Amish as recommended earlier the same day: "i approve your recommendations for all 555 open decisions." They are recorded in the register too.
 
 ## Context
 

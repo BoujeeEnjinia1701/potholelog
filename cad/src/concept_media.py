@@ -57,6 +57,9 @@ parts = [
     Part("M6 bolts, washers, locking nuts", m["fixings"], "#6B7280", 11, (0, 0, 20)),
     Part("Module carrier plate", m["carrier"], "#94A3B8", 12, (0, 0, 95)),
     Part("Hex standoffs, screws, foam tape", m["kit"], "#111827", 13, (0, 0, 75)),
+    Part("Status light pipes and LEDs", m["status"], "#34D399", 14, (0, 0, 335)),
+    Part("Breather vent, M12", m["vent"], "#AEB4BC", 15, (70, 0, 45)),
+    Part("Nameplate label", m["label"], "#0F766E", 16, (0, 0, 290)),
 ]
 
 # ---------------- grey context: road with a pothole, wheel, axle, suspension, floor ----------------
@@ -82,10 +85,10 @@ render_all(
     parts, project="PotholeLog", title="Fleet road roughness logger concept", dwg_no="PHL-DWG-010",
     key_figures=["Acceleration 400 Hz, GNSS 10 Hz with PPS",
                  "100 m roughness segments plus pothole events",
-                 "Box 120 x 90 x 55 mm on a 160 x 110 mm plate; 0.43 kg",
+                 "Box 120 x 90 x 55 mm on a 160 x 110 mm plate; 0.44 kg",
                  "0.54 W from a 12 or 24 V supply (60 V-rated input); 7 s hold-up",
-                 "$74 in parts (indicative); value-engineering target $75"],
-    date="2026-10-01", scale_figure=False, context=context,
+                 "$77.50 in parts (indicative); value-engineering target $75"],
+    date="2026-10-02", scale_figure=False, context=context,
     cut_exclude=("Cable gland and fused lead", "M6 bolts, washers, locking nuts"),
     flow={"title": "data flow (values from PHL-CAL-001; road data only, no images or audio)", "unit": "",
           "stages": [("Road surface", "potholes, roughness"),

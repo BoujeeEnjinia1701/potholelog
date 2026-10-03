@@ -23,6 +23,10 @@ cut, drilled or bought, and every joint has a fixing:
     placed clear of them, of the gland's inside locknut and of each other;
     the GNSS module is held under the lid by a pad of acrylic foam tape;
     the converter is turned 90 degrees so that it no longer clashes with the supercapacitor.
+Revised 2026-10-02 for the decisions Amish approved that day (PHL-DEC-001): two sealed status
+light pipes in the lid with their LEDs and wires (14), an M12 breather vent in the front end wall
+(15) and a nameplate label on the lid (16). The clear lid window is a render detail only and is
+not in this model (the build keeps the opaque lid).
 Main dimensions and interfaces only; tolerances are TRL 4 work. The same PARAMS feed
 docs/04-calcs/sizing.py (PHL-CAL-001), the drawing PHL-DWG-001 (cad/src/sheets.py), the
 concept media (cad/src/concept_media.py) and the build plan pictures (cad/src/build_plan_media.py).
@@ -55,6 +59,16 @@ PARAMS = {
     "gland": (10.0, 18.0), "gland_yz": (10.0, 20.0), "gland_nut": (12.0, 5.0), "lead_d": 7.0, "lead_stub": 120.0,
     # 11 fixings: M6 bolts, washers and locking nuts (heads shown)
     "bolt_head": (10.0, 4.0), "washer": (12.0, 1.6),
+    # 14 two sealed status light pipes in the lid (decision of 2026-10-02): x, y of each on the lid,
+    #   hole d, flange d and t, length below the lid top, inside nut across flats and t
+    "light_pipe_xy": ((-40.0, -30.0), (-30.0, -30.0)), "light_pipe": (6.4, 9.0, 1.0, 10.0), "lp_nut": (8.0, 2.5),
+    #   5 mm LED in each pipe's rear socket (d, length below it); wire pair to the controller, routed at led_wire_z
+    "led": (5.0, 5.0), "led_wire": 1.6, "led_wire_z": 40.0, "led_wire_end": (-35.0, 14.0),
+    # 15 M12 pressure-equalizing breather vent in the front (+X) end wall (decision of 2026-10-02):
+    #   hole d, outside cap d and length, inside locknut across flats and t; y, z of the centre above the plate
+    "vent": (12.2, 14.0, 8.0, 16.0, 3.0), "vent_yz": (0.0, 30.0),
+    # 16 printed nameplate label with forward arrow on the lid top (L x W x t, centre x, y)
+    "label": (54.0, 34.0, 0.2), "label_xy": (26.0, -2.0),
 }
 
 
@@ -183,6 +197,8 @@ def build_components(p=PARAMS):
         base = base - zcyl(x, y, z0 + t / 2, 1.75, t + 2)
     gy, gz = p["gland_yz"]
     base = base - xcyl(-bl / 2 + t / 2, gy, z0 + gz, 8.0, t + 2)
+    vy, vz = p["vent_yz"]
+    base = base - xcyl(bl / 2 - t / 2, vy, z0 + vz, p["vent"][0] / 2, t + 2)    # 15 vent, front end wall
     add("base", "Enclosure base, drilled", base, 2, "bought")
 
     # 3 Lid with its pillars, and 4 lid screws (bought with the box)
@@ -195,6 +211,8 @@ def build_components(p=PARAMS):
         lid = lid + lp - zcyl(x, y, lid_z0 + p["lid_h"] / 2, 2.2, p["lid_h"] + 2)
         top = lid_z0 + p["lid_h"]
         screws.append(zcyl(x, y, top + 1.4, 3.5, 2.8) + zcyl(x, y, top - 9, 1.7, 18))
+    for x, y in p["light_pipe_xy"]:                                             # 14 light pipe holes
+        lid = lid - zcyl(x, y, lid_z0 + p["lid_h"] - t / 2, p["light_pipe"][0] / 2, t + 2)
     add("lid", "Lid with gasket", lid, 3, "bought")
     add("lid_screws", "Lid screws (4, with the box)", _fuse(screws), 3, "fixing")
 
@@ -278,6 +296,47 @@ def build_components(p=PARAMS):
     bh_d, bh_h = p["bolt_head"]; wd, wt = p["washer"]
     fix = [zcyl(x, y, pt + wt / 2, wd / 2, wt) + zhex(x, y, pt + wt + bh_h / 2, bh_d, bh_h) for x, y in corners(hx, hy)]
     add("fixings", "M6 bolts and washers (4)", _fuse(fix), 11, "fixing")
+
+    # 14 Status light pipes in the lid (flange outside, body through the sealed hole, nut inside),
+    #    a 5 mm LED in each pipe's rear socket and one wire pair from each LED to the controller
+    hd, fd, ft, pl_ = p["light_pipe"]
+    naf, nt2 = p["lp_nut"]
+    top = lid_z0 + p["lid_h"]
+    lti = D["lid_top_in"]
+    pipes, nuts, leds, wires = [], [], [], []
+    ld, ll = p["led"]
+    wr = p["led_wire"] / 2
+    wz = p["led_wire_z"]
+    ex, ey = p["led_wire_end"]
+    ctrl_top = ctrl_z + p["controller"][2]
+    for x, y in p["light_pipe_xy"]:
+        pipes.append(zcyl(x, y, top + ft / 2, fd / 2, ft) + zcyl(x, y, top - pl_ / 2, hd / 2, pl_))
+        nuts.append(zhex(x, y, lti - nt2 / 2, naf, nt2) - zcyl(x, y, lti - nt2 / 2, hd / 2, nt2 + 1))
+        zl = top - pl_
+        leds.append(zcyl(x, y, zl - ll / 2, ld / 2, ll))
+        wires.append(zcyl(x, y, (zl - ll + wz) / 2, wr, zl - ll - wz))
+    xs = [x for x, _ in p["light_pipe_xy"]]
+    ly0 = p["light_pipe_xy"][0][1]
+    wires.append(xcyl((min(xs) + max(xs)) / 2, ly0, wz, wr, max(xs) - min(xs) + 2 * wr))
+    wires.append(box(ex, (ly0 + ey) / 2, wz, 2 * wr, ey - ly0 + 2 * wr, 2 * wr))
+    wires.append(zcyl(ex, ey, (wz + ctrl_top) / 2, wr, wz - ctrl_top))
+    add("light_pipes", "Status light pipes (2)", _fuse(pipes), 14, "bought")
+    add("lp_nuts", "Light pipe nuts (2)", _fuse(nuts), 14, "fixing")
+    add("leds", "Status LEDs (2)", _fuse(leds), 14, "bought")
+    add("led_wires", "LED wires to the controller", _fuse(wires), 14, "bought")
+
+    # 15 Breather vent: hole in the front end wall, cap outside, thread through, locknut inside
+    vd, vcd, vcl, vaf, vnt = p["vent"]
+    vy, vz = p["vent_yz"]
+    zv = z0 + vz
+    vent = xcyl(bl / 2 + vcl / 2, vy, zv, vcd / 2, vcl) + xcyl(bl / 2 - t / 2, vy, zv, vd / 2, t) \
+        + (xhex(bl / 2 - t - vnt / 2, vy, zv, vaf, vnt) - xcyl(bl / 2 - t - vnt / 2, vy, zv, vd / 2, vnt + 1))
+    add("vent", "Breather vent M12", vent, 15, "bought")
+
+    # 16 Nameplate label on the lid top
+    lbl, lbw, lbt = p["label"]
+    lx, ly = p["label_xy"]
+    add("label", "Nameplate label", box(lx, ly, top + lbt / 2, lbl, lbw, lbt), 16, "bought")
     return C
 
 
@@ -287,12 +346,13 @@ BOM_GROUPS = {  # build_parts key: (BOM line, component keys)
     "imu": (7, ["imu"]), "gnss": (8, ["gnss"]), "lead": (9, ["gland", "lead"]),
     "sd": (10, ["sd"]), "fixings": (11, ["fixings"]), "carrier": (12, ["carrier"]),
     "kit": (13, ["standoffs", "carrier_screws", "imu_screws", "module_standoffs", "tape"]),
+    "status": (14, ["light_pipes", "lp_nuts", "leds", "led_wires"]), "vent": (15, ["vent"]), "label": (16, ["label"]),
 }
 BOM_ORDER = [(k, v[0]) for k, v in BOM_GROUPS.items()]
 
 
 def build_parts(p=PARAMS):
-    """Return {key: solid} for BOM items 1 to 13, grouped as BOM_GROUPS says."""
+    """Return {key: solid} for BOM items 1 to 16, grouped as BOM_GROUPS says."""
     C = build_components(p)
     return {k: _fuse([C[c].shape for c in keys]) for k, (_, keys) in BOM_GROUPS.items()}
 
@@ -365,6 +425,26 @@ def checks(p=PARAMS):
     chk("M6 washers on the plate", S("fixings"), S("plate"), "touch")
     chk("M6 bolt heads clear of the box (spanner room)", S("fixings"), box_, 3.0)
     chk("Lead clear of the plate and M6 fixings", S("lead"), S("plate") + S("fixings"), 1.0)
+    # 14 to 16, adopted 2026-10-02 (PHL-DEC-001 decisions 3 and 4, nameplate)
+    chk("Light pipes sealed in the lid holes", S("light_pipes"), S("lid"), "touch")
+    chk("Light pipe nuts on the inside of the lid", S("lp_nuts"), S("lid") + S("light_pipes"), "touch")
+    chk("Light pipe nuts clear of the lid pillars and screws", S("lp_nuts"), S("lid_screws"), 3.0)
+    chk("Light pipes clear of the GNSS module and its tape", S("light_pipes") + S("lp_nuts"), S("gnss") + S("tape"), 5.0)
+    chk("LEDs in the light pipe sockets", S("leds"), S("light_pipes"), "touch")
+    chk("LED wires on the LEDs", S("led_wires"), S("leds"), "touch")
+    chk("LED wires on the controller", S("led_wires"), S("controller"), "touch")
+    chk("LED wires clear of the GNSS module", S("led_wires"), S("gnss"), 3.0)
+    chk("LED wires clear of the box walls and pillars", S("led_wires") + S("leds"), S("base"), 2.0)
+    chk("LED wires clear of the carrier, its screws and standoffs", S("led_wires"), S("carrier") + S("carrier_screws") + S("standoffs"), 5.0)
+    chk("LED wires clear of the converter and supercapacitor", S("led_wires"), S("converter") + S("supercap"), 5.0)
+    chk("Breather vent in the front end wall", S("vent"), S("base"), "touch")
+    chk("Breather vent clear of the lid", S("vent"), S("lid"), 2.0)
+    for k in ("converter", "supercap", "controller"):
+        chk(f"Breather vent locknut clear of the {C[k].name}", S("vent"), S(k), 3.0)
+    chk("Breather vent clear of the carrier and its screws", S("vent"), S("carrier") + S("carrier_screws"), 3.0)
+    chk("Breather vent clear of the plate and M6 fixings", S("vent"), S("plate") + S("fixings"), 3.0)
+    chk("Nameplate label on the lid top", S("label"), S("lid"), "touch")
+    chk("Nameplate label clear of the lid screws and light pipes", S("label"), S("lid_screws") + S("light_pipes"), 3.0)
     low = min(C[k].shape.bounding_box().min.Z for k in C if k != "lead")
     rows.append(("Nothing below the plate's underside (it sits flat)", 0.0, low, 0.0, low >= -1e-6))
     return rows
@@ -392,7 +472,8 @@ if __name__ == "__main__":
     groups = {
         "potholelog-assembly": [P[k] for k, _ in BOM_ORDER],
         "mounting-plate": [P["plate"]],
-        "enclosure": [P[k] for k in ("base", "lid", "carrier", "kit", "converter", "supercap", "controller", "sd", "imu", "gnss")],
+        "enclosure": [P[k] for k in ("base", "lid", "carrier", "kit", "converter", "supercap", "controller", "sd", "imu", "gnss",
+                                     "status", "vent", "label")],
     }
     for name, shapes in groups.items():
         c = Compound(children=shapes)

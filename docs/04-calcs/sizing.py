@@ -376,16 +376,18 @@ tag("H1", f"self-heating: {P_IN:.2f} W over {area / 100:.0f} cm^2 of box at {H_C
           f"at +70 degC ambient the parts see about {70 + dT:.0f} degC")
 RHO = {"plate": 2.68, "base": 1.20, "lid": 1.20}
 M_BUY = {"converter": 15, "supercap": 6, "controller": 10, "imu": 2, "gnss": 12, "sd": 0.5,
-         "gland": 12, "lead": 2 * 45, "fixings": 4 * 12}
+         "gland": 12, "lead": 2 * 45, "fixings": 4 * 12,
+         "status": 3, "vent": 4, "label": 1}      # lines 14 to 16, adopted 2026-10-02: light pipes and LEDs, vent, label
 m_plate = parts["plate"].volume / 1000 * RHO["plate"]
 m_box = (parts["base"].volume + parts["lid"].volume) / 1000 * RHO["base"]
 RHO_AL = 2.68
 m_carrier = parts["carrier"].volume / 1000 * RHO_AL          # carrier plate (PHL-DDR-003)
 M_KIT = 4 * 3.0 + 4 * 1.0 + 2 * 0.6 + 8 * 0.3 + 1.0          # standoffs, screws, nylon standoffs, tape (g)
 m_inside = sum(M_BUY[k] for k in ("converter", "supercap", "controller", "imu", "gnss", "sd")) + m_carrier + M_KIT
-m_logger = m_plate + m_box + m_inside + M_BUY["gland"]
+m_adopted = M_BUY["status"] + M_BUY["vent"] + M_BUY["label"]
+m_logger = m_plate + m_box + m_inside + M_BUY["gland"] + m_adopted
 m_total = m_logger + M_BUY["lead"] + M_BUY["fixings"]
-tag("H2", f"mass: plate {m_plate:.0f} g, enclosure {m_box:.0f} g (polycarbonate), modules on their carrier {m_inside:.0f} g (carrier {m_carrier:.0f} g, fixings {M_KIT:.0f} g), gland {M_BUY['gland']} g: "
+tag("H2", f"mass: plate {m_plate:.0f} g, enclosure {m_box:.0f} g (polycarbonate), modules on their carrier {m_inside:.0f} g (carrier {m_carrier:.0f} g, fixings {M_KIT:.0f} g), gland {M_BUY['gland']} g, light pipes, vent and label {m_adopted} g: "
           f"logger {m_logger / 1000:.2f} kg; with 2 m lead and fixings {m_total / 1000:.2f} kg")
 CRASH_G, BUMP_G = 20.0, 10.0
 F_crash = m_logger / 1000 * CRASH_G * G
@@ -428,7 +430,8 @@ budget = float(yaml.safe_load((ROOT / "project.yaml").read_text())["budget_usd"]
 tag("J1", f"BOM {len(bom)} lines: estimated cost of the constructable design ${total:.2f}; value-engineering target (budget_usd) ${budget:.0f}; "
           f"${abs(budget - total):.2f} {'under' if total <= budget else 'over'} the target")
 tag("J2", f"the 60 V-rated converter is in the BOM (about $2 more than the 36 V part); the carrier plate and box fixing kit added for construction "
-          f"(PHL-DDR-003) add $3.50; the LTE-M option (about $20 to $30) would give ${total + 20:.0f} to ${total + 30:.0f}, over the target")
+          f"(PHL-DDR-003) add $3.50; the light pipes and LEDs, breather vent and nameplate label adopted on 2026-10-02 (lines 14 to 16) add "
+          f"${sum(float(r['unit_cost_usd']) * float(r['qty']) for r in bom if r['item'].split()[0] in ('14', '15', '16')):.2f}; the LTE-M option (about $20 to $30) would give ${total + 20:.0f} to ${total + 30:.0f}, over the target")
 
 # ------------------------------------------------------------------ K. Summary for the results table
 print("\nK. Summary")

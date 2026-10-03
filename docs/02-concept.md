@@ -3,7 +3,7 @@ doc_id: PHL-PRC-001
 title: PotholeLog design precis
 project: PotholeLog
 doc_type: Design precis
-version: "0.6"
+version: "0.7"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -33,13 +33,17 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: 'Decisions of 2026-10-02 (PHL-DEC-001): lid light pipes, nameplate and breather vent adopted; clear window renders only; CityTwin ingest and pooled dates; first pilot partner'
+- version: "0.7"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Approved follow-ups carried out: light pipes and LEDs, breather vent and nameplate label as BOM lines 14 to 16; mass 0.44 kg and cost USD 77.50 (R15 not met); segment file pooling rule written into the server export'
 ---
 
 # PotholeLog design precis
 
 ## Summary
 
-PotholeLog is a sealed box, 120 x 90 x 55 mm on a 4 mm plate (59 mm overall), bolted to the floor of a bus or refuse truck above the rear axle. It records how the vehicle shakes and where it is, turns each 100 m of road into a roughness value and flags sharp impacts as possible potholes, then uploads a small daily file over depot Wi-Fi. Averaged over many passes and calibrated per vehicle, the data gives a city a weekly map of road condition on every street its fleet drives. The TRL 3 calculations (PHL-CAL-001) show that off-the-shelf modules meet the sampling, storage, hold-up and power needs for an estimated $74 in parts, $1 under the $75 value-engineering target, and that the roughness signal is well above sensor noise. They also found two limits, both now addressed by Amish's 2026-09-25 decisions (PHL-DDR-002). A bus tyre bridges most of a 300 mm pothole, so the floor-mounted logger finds the R1 reference pothole only at low speed (up to about 20 km/h on a fair road, 50 km/h on a good one); small potholes are therefore sought on slow passes, 10 to 30 km/h, near stops and junctions. The converter is now rated 60 V so that it survives a load dump on a 24 V vehicle. Detection accuracy and calibration to IRI remain unverified until field data exist. On 2026-10-01 the design was made constructable (PHL-DDR-003): the modules now sit on a carrier plate held by the four hex standoffs that fix the box to the mounting plate, and the build is described component by component in the prototype build plan ([PHL-BLD-001](05-build-plan.md)).
+PotholeLog is a sealed box, 120 x 90 x 55 mm on a 4 mm plate (59 mm overall), bolted to the floor of a bus or refuse truck above the rear axle. It records how the vehicle shakes and where it is, turns each 100 m of road into a roughness value and flags sharp impacts as possible potholes, then uploads a small daily file over depot Wi-Fi. Averaged over many passes and calibrated per vehicle, the data gives a city a weekly map of road condition on every street its fleet drives. The TRL 3 calculations (PHL-CAL-001) show that off-the-shelf modules meet the sampling, storage, hold-up and power needs for an estimated $77.50 in parts, $2.50 over the $75 value-engineering target since the status lights, breather vent and nameplate adopted on 2026-10-02 were added, and that the roughness signal is well above sensor noise. They also found two limits, both now addressed by Amish's 2026-09-25 decisions (PHL-DDR-002). A bus tyre bridges most of a 300 mm pothole, so the floor-mounted logger finds the R1 reference pothole only at low speed (up to about 20 km/h on a fair road, 50 km/h on a good one); small potholes are therefore sought on slow passes, 10 to 30 km/h, near stops and junctions. The converter is now rated 60 V so that it survives a load dump on a 24 V vehicle. Detection accuracy and calibration to IRI remain unverified until field data exist. On 2026-10-01 the design was made constructable (PHL-DDR-003): the modules now sit on a carrier plate held by the four hex standoffs that fix the box to the mounting plate, and the build is described component by component in the prototype build plan ([PHL-BLD-001](05-build-plan.md)).
 
 ![PotholeLog on a vehicle floor above the rear axle, with a wheel, suspension and a road with a pothole for scale](../media/hero.png)
 
@@ -52,11 +56,21 @@ Figure 1. Concept massing model. The logger is the small dark box on the floor s
 3. **Summarize on board.** For every 100 m traveled, the controller computes a roughness value from the vertical acceleration (band-limited RMS from 0.5 to 20 Hz, tagged with its speed band for calibration), and records the segment's start and end, speed and the number of samples. Sharp vertical impacts above a threshold are stored as defect events, with most small potholes expected from slow passes at 10 to 30 km/h near stops and junctions (R5) with position, speed and peak size; the front and rear axle impacts of the same defect, about 0.4 to 0.7 s apart in town, are paired to confirm the event and place it at the rear axle.
 4. **Upload.** When the vehicle is back within depot Wi-Fi with the ignition on, on arrival or at the next start, the controller joins the network and uploads the day's summaries (about 112 kB, about 8 s) to the fleet's server. The hold-up capacitor cannot power Wi-Fi long enough to upload after the ignition is switched off.
 5. **Calibrate and aggregate.** On the server, each vehicle's raw roughness is converted to an IRI estimate using a calibration equation found on reference sections, in the way World Bank Technical Paper 46 describes for response-type systems ([Sayers et al., 1986](https://documents1.worldbank.org/curated/en/851131468160775725/pdf/multi-page.pdf)). Events from several passes and vehicles are clustered; a cluster seen on repeated passes becomes a reported defect, as in Pothole Patrol ([Eriksson et al., 2008](https://doi.org/10.1145/1378600.1378605)).
-6. **Publish.** The city publishes a map of segment roughness and defect clusters as CSV and GeoJSON, for its own GIS and for CityTwin. Vehicle tracks and timestamps stay on the operator's server. CityTwin fetches the segment files from the operator's server; a date per segment is published only once at least two vehicles or several days are pooled, and pass times never are (decided 2026-10-02, PHL-DEC-001).
+6. **Publish.** The city publishes a map of segment roughness and defect clusters as CSV and GeoJSON, for its own GIS and for CityTwin. Vehicle tracks and timestamps stay on the operator's server. CityTwin fetches the segment files from the operator's server; a date per segment is published only once at least two vehicles or several days are pooled, and pass times never are (decided 2026-10-02, PHL-DEC-001). The server export applies the pooling rule below.
 
 ![Data flow from road surface to open road map](../media/flow.png)
 
 Figure 2. Data flow. Values from PHL-CAL-001.
+
+### Server export: segment files and the pooling rule
+
+The operator's server writes one segment file a day in CSV and GeoJSON, following the CityTwin open data export, and CityTwin fetches it over HTTPS (decided 2026-10-02, PHL-DEC-001; CityTwin's outbound pull, CTW-DDR-001 D11). Each row is one 100 m segment: segment identifier and geometry, calibrated roughness (IRI estimate) with its uncertainty, number of passes, number of vehicles and number of days pooled, and defect clusters as point events. The pooling rule is applied in the export, not left to the reader:
+
+1. A segment's row carries a date (day only, never a time) only when its value pools passes from at least two vehicles, or from at least three separate days. Otherwise the date field is left empty.
+2. Pass times, vehicle identifiers, tracks and speeds are never exported; they stay on the operator's server.
+3. Defect clusters carry the date of the newest day in the pool, under the same rule.
+
+The three-day figure is this precis's reading of "several days" in the decision; it is to be matched with CityTwin's item 6 so both repos use the same rule and field names.
 
 ## Main components
 
@@ -65,8 +79,8 @@ Table 1. Main components. Numbers match the exploded view (Figure 3), `cad/src/m
 | # | Component | Proposed choice | Notes |
 | --- | --- | --- | --- |
 | 1 | Mounting plate | 160 x 110 x 4 mm aluminum, 4 x M6 on 140 x 90 mm; tapped for the box standoffs and the IMU screws | Bolts to existing crossmember, seat-rail or floor fixings; first mode about 168 Hz on corner bolts |
-| 2 | Enclosure base | Stock IP65 ABS or polycarbonate box, 120 x 90 mm, with corner lid-screw pillars | Held to the plate by four M4 hex standoffs through its floor (PHL-DDR-003); a pressure-equalizing breather vent in the front end wall (decided 2026-10-02) |
-| 3 | Enclosure lid | Supplied with the box, with gasket; opaque; two sealed status light pipes (power and logging) and a printed nameplate label with a forward arrow (decided 2026-10-02) | GNSS antenna under the lid; plastic lid keeps sky view through vehicle windows; the clear window shown in the renders is for the renders only |
+| 2 | Enclosure base | Stock IP65 ABS or polycarbonate box, 120 x 90 mm, with corner lid-screw pillars | Held to the plate by four M4 hex standoffs through its floor (PHL-DDR-003); a 12.2 mm hole in the front end wall for the breather vent (15) |
+| 3 | Enclosure lid | Supplied with the box, with gasket; opaque; two 6.4 mm holes for the status light pipes (14) and the nameplate label (16) on top (decided 2026-10-02) | GNSS antenna under the lid; plastic lid keeps sky view through vehicle windows; the clear window shown in the renders is for the renders only |
 | 4 | DC-DC converter and protection | 9 to 60 V in (60 V rated), 5 V 1 A out; TVS diode, reverse-polarity diode, input fuse | Covers normal 12 V and 24 V supplies and a 24 V suppressed load dump (58 V), clearing the TVS clamp by 1.9 V (PHL-DDR-002, N1) |
 | 5 | Hold-up supercapacitor | 1 F, 5.5 V, rated to 70 °C or more | About 7 s at end of life to close files when power drops |
 | 6 | Controller | ESP32-S3 board with Wi-Fi and microSD slot; module variant rated to 85 °C | Decided by Amish, 2026-09-25 (PHL-DDR-001, D4) |
@@ -77,6 +91,9 @@ Table 1. Main components. Numbers match the exploded view (Figure 3), `cad/src/m
 | 11 | Fixings | 4 x M6 (8.8) with locking nuts and washers | Crash load is small; loosening needs a later test |
 | 12 | Module carrier plate | 92 x 76 x 1.5 mm aluminum with a window over the IMU | Carries the converter, supercapacitor and controller (PHL-DDR-003) |
 | 13 | Box fixing kit | 4 x M4 hex standoffs, screws, nylon standoffs, foam tape, sealant | Added for construction (PHL-DDR-003) |
+| 14 | Status light pipes and LEDs | Two sealed panel-mount light pipes in the lid, a 5 mm LED in each, plug lead to the controller | Power and logging lights; adopted 2026-10-02 (PHL-DEC-001, decision 3) |
+| 15 | Breather vent | M12 pressure-equalizing membrane vent, IP67, in the front end wall | Stops the box pumping moist air through the gasket as it heats and cools; adopted 2026-10-02 (decision 4) |
+| 16 | Nameplate label | 54 x 34 mm laminated polyester label with a forward arrow | Shows which way the IMU's X axis must point; adopted 2026-10-02 |
 
 ![Exploded view with BOM callouts](../media/exploded.png)
 
@@ -115,9 +132,9 @@ Table 2. Key numbers.
 | Plate first mode | 168 Hz on corner bolts | 4 mm aluminum, 140 mm span | R12 met on paper |
 | Installation | 30 min | Task estimate | R12 at the limit |
 | Size | 120 x 90 x 55 mm box on a 160 x 110 x 4 mm plate, 59 mm overall | `cad/src/model.py` | |
-| Mass | 0.43 kg; 0.57 kg with lead and fixings | Model volumes and module masses | |
+| Mass | 0.44 kg; 0.58 kg with lead and fixings | Model volumes and module masses | |
 | Converter input rating | 60 V against a 58 V suppressed load dump and a 58.1 V TVS clamp | ISO 16750-2 test B levels, to confirm | R9 at risk (TVS pulse energy) |
-| Parts cost | $74.00 | `bom/bom.csv` | R15 met: $1.00 under the $75 value-engineering target |
+| Parts cost | $77.50 | `bom/bom.csv` | R15 not met: $2.50 over the $75 value-engineering target |
 
 ## Key design choices
 

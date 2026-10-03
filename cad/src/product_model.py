@@ -4,10 +4,13 @@ Finished-product look for photoreal renders: a filleted aluminum mounting plate 
 bolts and washers; the stock IP65 enclosure with rounded corners, a lid-to-base parting line,
 stainless lid screws in corner pockets, a clear window in the lid over the GNSS patch antenna,
 two lit status light pipes, a raised teal nameplate with a forward arrow (the IMU axis is
-referenced to the vehicle), and a breather vent on the +X end wall; the M16 cable gland with a
-knurled dome cap and the fused lead swept down to the floor and held by a P-clip. Inside: the
-DC-DC converter with its inductor and terminal block, the hold-up supercapacitor, the controller
-board on its standoff rail with the microSD card, the IMU breakout on the floor and the GNSS
+referenced to the vehicle), and a breather vent on the +X (front) end wall; the light pipes, vent
+and nameplate were adopted on 2026-10-02 and their sizes come from model.py (BOM lines 14 to 16).
+The clear lid window is a RENDER DETAIL ONLY (decision of 2026-10-02): the build lid is opaque.
+Outside also: the M16 cable gland with a knurled dome cap and the fused lead swept down to the floor and held by a P-clip. Inside: the
+aluminum carrier plate on four hex standoffs (PHL-DDR-003) carrying the DC-DC converter with its
+inductor and terminal block, the hold-up supercapacitor and the controller board on nylon standoffs
+with the microSD card; the status LEDs and their lead; the IMU breakout on the floor and the GNSS
 module with its ceramic patch. Context is a compact section of vehicle floor with a crossmember
 below it.
 APPEARANCE MODEL ONLY: no tolerances, no fabrication detail. CONCEPT, NOT FOR FABRICATION.
@@ -26,7 +29,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from build123d import (Axis, Box, Circle, Cylinder, FilletPolyline, Plane, Polygon, Pos,
                        RectangleRounded, RegularPolygon, Rot, extrude, fillet, sweep)
-from model import PARAMS, derived, build_parts
+from model import PARAMS, derived, build_parts, build_components
 
 TITLE = "PotholeLog: vehicle-mounted road roughness and pothole logger"
 
@@ -38,7 +41,8 @@ RENDER_VIEWS = [
     {"name": "exploded", "groups": ["shell", "internal", "accessory"], "explode": True, "el": 28, "az": -55,
      "note": "Exploded view from the front right and above (about 28 deg elevation): lid with window, "
              "screws and nameplate; GNSS module; controller, microSD card, supercapacitor and DC-DC "
-             "converter; IMU on the base floor; base; mounting plate and M6 fixings; gland and lead at left"},
+             "converter on the aluminum carrier plate and its hex standoffs; IMU on the base floor; base with breather vent; "
+             "mounting plate and M6 fixings; gland and lead at left"},
     {"name": "detail", "groups": ["shell", "internal"], "explode": False, "el": 34, "az": -40,
      "note": "Detail view from the front right and above (about 34 deg elevation) without the vehicle: "
              "nameplate with forward arrow, lit status lights, GNSS window and breather vent on the "
@@ -73,9 +77,11 @@ PLATE_R = 8.0              # plate corner radius in plan
 BOX_R = 6.0                # enclosure corner radius in plan
 SEAM = 0.8                 # edge round each side of the lid-to-base parting line
 LID_SCREW_XY = [(sx * 52.0, sy * 37.0) for sx in (-1, 1) for sy in (-1, 1)]
-WIN_XY, WIN_SIZE, WIN_R = (-25.0, 20.0), (40.0, 38.0), 4.0
-LED_XY = [(-44.0, -30.0), (-34.0, -30.0)]
-LABEL_XY, LABEL_SIZE = (26.0, -2.0), (54.0, 34.0)
+# RENDER DETAIL ONLY (decision of 2026-10-02, option a): the clear GNSS window is shown in the renders;
+# the build keeps the opaque lid (model.py has no window).
+WIN_XY, WIN_SIZE, WIN_R = PARAMS["gnss_xy"], (40.0, 38.0), 4.0
+LED_XY = [tuple(xy) for xy in PARAMS["light_pipe_xy"]]                      # model.py, BOM line 14
+LABEL_XY, LABEL_SIZE = PARAMS["label_xy"], PARAMS["label"][:2]           # model.py, BOM line 16
 FLOOR_X, FLOOR_Y, FLOOR_T = (-204.0, 98.0), (-82.0, 82.0), 5.0
 
 
@@ -154,8 +160,9 @@ def _base(P, D):
     # gland bore on the -X end wall, as model.py
     gy, gz = P["gland_yz"]
     base -= _xrod(-bl / 2 - 2, -bl / 2 + t + 2, gy, pt + gz, 8.1)
-    # breather vent bore on the +X end wall (proposed, see docs/REVIEW.md)
-    base -= _xrod(bl / 2 - t - 2, bl / 2 + 2, 0.0, pt + 30.0, 6.2)
+    # breather vent bore in the front (+X) end wall, as model.py (BOM line 15)
+    vy, vz = P["vent_yz"]
+    base -= _xrod(bl / 2 - t - 2, bl / 2 + 2, vy, pt + vz, P["vent"][0] / 2)
     return base
 
 
@@ -172,13 +179,13 @@ def _lid(P, D):
         lid -= Pos(x, y, top - 1.25) * Cylinder(4.2, 2.6)
         lid -= Pos(x, y, top - lh / 2) * Cylinder(1.8, lh + 2)
         lid += Pos(x, y, z0 + (lh - t) / 2) * (Cylinder(4.0, lh - t) - Cylinder(1.8, lh))
-    # GNSS window: seat pocket and through opening
+    # GNSS window (RENDER DETAIL ONLY; the build lid is opaque): seat pocket and through opening
     wx, wy = WIN_XY
     lid -= _prism(WIN_SIZE[0] + 4, WIN_SIZE[1] + 4, WIN_R + 2, top - 1.0, 2.0, x=wx, y=wy)
     lid -= _prism(WIN_SIZE[0], WIN_SIZE[1], WIN_R, top - t - 1, t + 2, x=wx, y=wy)
-    # light pipe holes
+    # light pipe holes, as model.py
     for (x, y) in LED_XY:
-        lid -= Pos(x, y, top - lh / 2) * Cylinder(2.1, lh + 2)
+        lid -= Pos(x, y, top - lh / 2) * Cylinder(P["light_pipe"][0] / 2, lh + 2)
     # shallow nameplate recess
     lx, ly = LABEL_XY
     lid -= _prism(LABEL_SIZE[0] + 1, LABEL_SIZE[1] + 1, 3.5, top - 0.3, 1.0, x=lx, y=ly)
@@ -263,11 +270,11 @@ def product_parts(P=PARAMS):
     add("Lid screws (stainless)", _union(screws), C_STEEL, "metal", 2, "shell", (0, 0, 246))
     wx, wy = WIN_XY
     window = _prism(WIN_SIZE[0] + 3.6, WIN_SIZE[1] + 3.6, WIN_R + 1.8, top - 1.0, 0.9, x=wx, y=wy)
-    add("GNSS window (polycarbonate)", window, C_WINDOW, "clear", 3, "shell", (0, 0, 226))
+    add("GNSS window (polycarbonate, render detail only)", window, C_WINDOW, "clear", 3, "shell", (0, 0, 226))
     # nameplate: teal plate, white forward arrow and three text bars
     lx, ly = LABEL_XY
     plate_lab = _prism(LABEL_SIZE[0], LABEL_SIZE[1], 3.0, top - 0.3, 0.5, x=lx, y=ly)
-    add("Nameplate", plate_lab, C_ACCENT, "plastic", None, "shell", (0, 0, 238))
+    add("Nameplate label", plate_lab, C_ACCENT, "plastic", 16, "shell", (0, 0, 238))
     zlab = top + 0.2
     arrow = Pos(lx - 4, ly + 7.5, zlab) * extrude(
         Polygon((-18, -2), (6, -2), (6, -5.5), (15, 0), (6, 5.5), (6, 2), (-18, 2), align=None), amount=0.25)
@@ -277,21 +284,23 @@ def product_parts(P=PARAMS):
     # light pipes with dark bezels
     bez, pipes = [], []
     for (x, y) in LED_XY:
-        b = Pos(x, y, top + 0.4) * (Cylinder(3.4, 0.8) - Cylinder(2.1, 1.0))
+        hd, fd, ft, pl_ = P["light_pipe"]
+        b = Pos(x, y, top + ft / 2) * (Cylinder(fd / 2, ft) - Cylinder(hd / 2 - 0.8, ft + 0.2))
         bez.append(_fillet_try(b, _top_edges(b), [0.3, 0.2]))
-        p = Pos(x, y, top - lh / 2 + 0.35) * Cylinder(2.0, lh + 0.7)
+        p = Pos(x, y, top + ft - pl_ / 2 - 0.3) * Cylinder(hd / 2 - 0.8, pl_ + 0.6)
         pipes.append(_fillet_try(p, _top_edges(p), [0.6, 0.4]))
-    add("Light pipe bezels", _union(bez), C_BLACK, "plastic", None, "shell", (0, 0, 246))
-    add("Status light, power (lit)", pipes[0], C_LED_PWR, "emissive", None, "shell", (0, 0, 246))
-    add("Status light, logging (lit)", pipes[1], C_LED_LOG, "emissive", None, "shell", (0, 0, 246))
+    add("Light pipe flanges", _union(bez), C_BLACK, "plastic", 14, "shell", (0, 0, 246))
+    add("Status light, power (lit)", pipes[0], C_LED_PWR, "emissive", 14, "shell", (0, 0, 246))
+    add("Status light, logging (lit)", pipes[1], C_LED_LOG, "emissive", 14, "shell", (0, 0, 246))
     # breather vent on the +X end wall
-    vz = pt + 30.0
-    vent = _xrod(bl / 2, bl / 2 + 4.0, 0.0, vz, 7.0)
+    vd, vcd, vcl, _, _ = P["vent"]
+    vy, vz = P["vent_yz"][0], pt + P["vent_yz"][1]
+    vent = _xrod(bl / 2, bl / 2 + vcl, vy, vz, vcd / 2)
     vent = _fillet_try(vent, vent.edges().sort_by(Axis.X)[-1:], [1.5, 1.0, 0.5])
-    vent += _xrod(bl / 2 - t - 2.0, bl / 2 + 0.1, 0.0, vz, 6.0)
+    vent += _xrod(bl / 2 - t, bl / 2 + 0.1, vy, vz, vd / 2)
     for k in range(3):
-        vent -= Pos(bl / 2 + 3.2, 0.0, vz - 3.0 + 3.0 * k) * Box(2.0, 8.0, 0.9)
-    add("Breather vent", vent, C_SHIELD, "plastic", None, "shell", (45, 0, 20))
+        vent -= Pos(bl / 2 + vcl - 0.8, vy, vz - 3.0 + 3.0 * k) * Box(2.0, 8.0, 0.9)
+    add("Breather vent (M12)", vent, C_SHIELD, "plastic", 15, "shell", (45, 0, 20))
 
     # ---- 9 gland and lead
     gland, lead, xe = _gland_and_lead(P)
@@ -305,76 +314,75 @@ def product_parts(P=PARAMS):
     clip += Pos(cx, gy - lr - 0.6, (pt + lr) / 2 + 0.3) * Box(8.0, 1.2, pt + lr - 0.6)
     add("Lead P-clip", clip, C_STEEL, "metal", 11, "context", (0, 0, 0))
 
-    # ---- internals on the base floor
-    # 7 IMU breakout (purple PCB, chip, header row)
+    # ---- internals: constructable layout of PHL-DDR-003 (carrier plate on hex standoffs), from model.py
+    C = build_components(P)
+    ctop = D["carrier_top"]
+    add("Hex standoffs M4 (brass)", C["standoffs"].shape, C_GOLD, "metal", 13, "internal", (0, 0, 70))
+    add("Module carrier plate (aluminum)", C["carrier"].shape, C_PLATE, "metal", 12, "internal", (0, 0, 95))
+    add("Carrier screws", C["carrier_screws"].shape, C_STEEL, "metal", 13, "internal", (0, 0, 100))
+    add("Module nylon standoffs", C["module_standoffs"].shape, C_WHITE, "plastic", 13, "internal", (0, 0, 105))
+    # 7 IMU breakout on the floor, two M3 screws into the plate
     ix_, iy_ = P["imu_xy"]
     iw, idp, ih = P["imu"]
-    imu = _prism(iw, idp, 1.5, fl + 2.0, 1.6, x=ix_, y=iy_)
-    for sx in (-1, 1):
-        for sy in (-1, 1):
-            imu -= Pos(ix_ + sx * 7.0, iy_ + sy * 7.0, fl + 2.8) * Cylinder(1.3, 3.0)
+    imu = _prism(iw, idp, 1.5, fl, ih, x=ix_, y=iy_)
+    for dx in (-P["imu_screw_dx"], P["imu_screw_dx"]):
+        imu -= Pos(ix_ + dx, iy_, fl + ih / 2) * Cylinder(1.6, ih + 2)
     add("6-axis IMU breakout", imu, C_PCB_PURPLE, "plastic", 7, "internal", (0, 0, 55))
-    ic = Pos(ix_, iy_, fl + 3.6 + 0.45) * Box(3.0, 2.5, 0.9)
-    ic += Pos(ix_, iy_ - 7.0, fl + 3.6 + 1.25) * Box(12.0, 2.5, 2.5)
-    ic += _union([Pos(ix_ + sx * 7.0, iy_ + sy * 7.0, fl + 1.0) * Cylinder(2.2, 2.0) for sx in (-1, 1) for sy in (-1, 1)])
-    add("IMU chip, header and spacers", ic, C_CHIP, "plastic", 7, "internal", (0, 0, 55))
-    ss = _union([Pos(ix_ + sx * 7.0, iy_ + sy * 7.0, fl + 3.6 + 0.6) * Cylinder(2.2, 1.2) for sx in (-1, 1) for sy in (-1, 1)])
-    add("IMU screws", ss, C_STEEL, "metal", 11, "internal", (0, 0, 55))
+    ic = Pos(ix_, iy_ + 2, fl + ih + 0.45) * Box(3.0, 2.5, 0.9)
+    ic += Pos(ix_, iy_ + idp / 2 - 2.5, fl + ih + 1.5) * Box(7.0, 5.0, 3.0)
+    add("IMU chip and side-entry plug", ic, C_CHIP, "plastic", 7, "internal", (0, 0, 55))
+    add("IMU screws", C["imu_screws"].shape, C_STEEL, "metal", 13, "internal", (0, 0, 55))
 
-    # 4 DC-DC converter and protection (blue PCB, inductor, capacitors, terminal block)
+    # 4 DC-DC converter on its nylon standoffs on the carrier (blue PCB, inductor, capacitors, terminal block)
     cx_, cy_ = P["converter_xy"]
     cw, cd, ch = P["converter"]
-    conv = _prism(cw, cd, 1.2, fl + 2.0, 1.6, x=cx_, y=cy_)
-    add("DC-DC converter board", conv, C_PCB_BLUE, "plastic", 4, "internal", (0, 0, 90))
-    cz = fl + 3.6
+    cb = ctop + P["standoff_conv"]
+    conv = _prism(cw, cd, 1.2, cb, 1.6, x=cx_, y=cy_)
+    add("DC-DC converter board", conv, C_PCB_BLUE, "plastic", 4, "internal", (0, 0, 120))
+    cz = cb + 1.6
     ind = Pos(cx_ - 4, cy_ + 3, cz + 4.0) * Box(12.0, 12.0, 8.0)
     ind = _fillet_try(ind, ind.edges().filter_by(Axis.Z), [2.0, 1.0])
-    caps_ = Pos(cx_ + 10, cy_ + 8, cz + 5.0) * Cylinder(4.0, 10.0)
-    caps_ += Pos(cx_ + 10, cy_ - 2, cz + 4.0) * Cylinder(3.2, 8.0)
+    caps_ = Pos(cx_ + 8, cy_ + 12, cz + 5.0) * Cylinder(4.0, 10.0)
+    caps_ += Pos(cx_ + 8, cy_ - 2, cz + 4.0) * Cylinder(3.2, 8.0)
     caps_ = _fillet_try(caps_, [e for e in caps_.edges() if e.center().Z > cz + 7.5], [0.6, 0.3])
-    tvs = Pos(cx_ - 10, cy_ - 9, cz + 1.0) * Box(5.0, 3.6, 2.0)
-    add("Converter inductor and TVS", ind + tvs, C_CHIP, "plastic", 4, "internal", (0, 0, 90))
-    add("Converter capacitors", caps_, C_SHIELD, "metal", 4, "internal", (0, 0, 90))
-    term = Pos(cx_ - cw / 2 + 4.0, cy_ - 2, cz + 5.0) * Box(7.0, 14.0, 10.0)
+    tvs = Pos(cx_ - 8, cy_ - 12, cz + 1.0) * Box(5.0, 3.6, 2.0)
+    add("Converter inductor and TVS", ind + tvs, C_CHIP, "plastic", 4, "internal", (0, 0, 120))
+    add("Converter capacitors", caps_, C_SHIELD, "metal", 4, "internal", (0, 0, 120))
+    term = Pos(cx_, cy_ + cd / 2 - 4.0, cz + 5.0) * Box(14.0, 7.0, 10.0)
     for k in (-1, 1):
-        term -= Pos(cx_ - cw / 2 + 4.0, cy_ - 2 + k * 3.5, cz + 10.0) * Cylinder(1.4, 3.0)
-    add("Converter terminal block", term, C_ACCENT, "plastic", 4, "internal", (0, 0, 90))
-    stand = _union([Pos(cx_ + sx * (cw / 2 - 3), cy_ + sy * (cd / 2 - 3), fl + 1.0) * Cylinder(2.0, 2.0)
-                    for sx in (-1, 1) for sy in (-1, 1)])
-    add("Converter spacers", stand, C_STEEL, "metal", 11, "internal", (0, 0, 90))
+        term -= Pos(cx_ + k * 3.5, cy_ + cd / 2 - 4.0, cz + 10.0) * Cylinder(1.4, 3.0)
+    add("Converter terminal block", term, C_ACCENT, "plastic", 4, "internal", (0, 0, 120))
 
-    # 5 hold-up supercapacitor (sleeved can)
+    # 5 hold-up supercapacitor standing on the carrier (sleeved can)
     sx_, sy_ = P["supercap_xy"]
     sr, sh = P["supercap"]
-    can = Pos(sx_, sy_, fl + sh / 2) * Cylinder(sr, sh)
+    can = Pos(sx_, sy_, ctop + sh / 2) * Cylinder(sr, sh)
     can = _fillet_try(can, _top_edges(can), [0.8, 0.5])
-    can -= Pos(sx_, sy_, fl + sh - 2.5) * (Cylinder(sr + 1, 0.6) - Cylinder(sr - 0.4, 1.0))
-    add("Hold-up supercapacitor", can, "#1F2A44", "painted", 5, "internal", (0, 0, 90))
-    cap_top = Pos(sx_, sy_, fl + sh + 0.05) * Cylinder(sr - 1.5, 0.1)
-    add("Supercapacitor top disc", cap_top, C_STEEL, "metal", 5, "internal", (0, 0, 90))
+    can -= Pos(sx_, sy_, ctop + sh - 2.5) * (Cylinder(sr + 1, 0.6) - Cylinder(sr - 0.4, 1.0))
+    add("Hold-up supercapacitor", can, "#1F2A44", "painted", 5, "internal", (0, 0, 120))
+    cap_top = Pos(sx_, sy_, ctop + sh + 0.05) * Cylinder(sr - 1.5, 0.1)
+    add("Supercapacitor top disc", cap_top, C_STEEL, "metal", 5, "internal", (0, 0, 120))
 
-    # 6 controller on a standoff rail, with ESP32-S3 module shield, USB-C and 10 microSD card
+    # 6 controller on its nylon standoffs on the carrier, with ESP32-S3 module shield, USB-C and 10 microSD card
     kx, ky = P["controller_xy"]
     kw, kd, kh = P["controller"]
-    so = P["standoff_ctrl"]   # controller standoff height (PHL-DDR-003)
-    rail = Pos(kx, ky, fl + so / 2) * Box(kw - 12, 6, so)
-    rail = _fillet_try(rail, rail.edges().filter_by(Axis.X), [1.0, 0.5])
-    add("Controller standoff rail", rail, "#4B5563", "plastic", 6, "internal", (0, 0, 112))
-    kz = fl + so
+    kz = ctop + P["standoff_ctrl"]
     pcb = _prism(kw, kd, 1.5, kz, 1.6, x=kx, y=ky)
-    add("Controller PCB (ESP32-S3)", pcb, C_PCB, "plastic", 6, "internal", (0, 0, 118))
+    add("Controller PCB (ESP32-S3)", pcb, C_PCB, "plastic", 6, "internal", (0, 0, 135))
     shield = Pos(kx + 8, ky, kz + 1.6 + 1.6) * Box(18.0, 16.0, 3.2)
     shield = _fillet_try(shield, _top_edges(shield), [0.4, 0.2])
     usbc = Pos(kx + kw / 2 - 3.5, ky, kz + 1.6 + 1.6) * Box(7.0, 9.0, 3.2)
-    add("ESP32-S3 module shield and USB-C", shield + usbc, C_SHIELD, "metal", 6, "internal", (0, 0, 118))
+    add("ESP32-S3 module shield and USB-C", shield + usbc, C_SHIELD, "metal", 6, "internal", (0, 0, 135))
     ant = Pos(kx + 21, ky, kz + 1.6 + 0.4) * Box(8.0, 16.0, 0.8)
     hdr = Pos(kx - 4, ky + kd / 2 - 1.6, kz + 1.6 + kh / 2 - 1.0) * Box(30.0, 2.5, kh - 3.6)
     hdr += Pos(kx - 4, ky - kd / 2 + 1.6, kz + 1.6 + kh / 2 - 1.0) * Box(30.0, 2.5, kh - 3.6)
-    add("Controller headers and antenna", ant + hdr, C_CHIP, "plastic", 6, "internal", (0, 0, 118))
-    sdw, sdd, sdh = P["sd"]
-    slot = Pos(kx - kw / 2 + sdw / 2 - 1.0, ky, kz - 1.0) * Box(sdw + 2.0, sdd + 2.0, 2.0)
-    add("microSD slot", slot, C_SHIELD, "metal", 6, "internal", (0, 0, 118))
-    add("microSD card (32 GB)", m["sd"], "#B91C1C", "plastic", 10, "internal", (-40, 0, 118))
+    add("Controller headers and antenna", ant + hdr, C_CHIP, "plastic", 6, "internal", (0, 0, 135))
+    add("microSD card (32 GB)", m["sd"], "#B91C1C", "plastic", 10, "internal", (-40, 0, 135))
+
+    # 14 status LEDs and their lead to the controller (the light pipes are on the lid, above)
+    add("Status LEDs", C["leds"].shape, "#FDE68A", "plastic", 14, "internal", (0, 0, 246))
+    add("Status LED lead", C["led_wires"].shape, "#B91C1C", "rubber", 14, "internal", (0, 0, 160))
+    add("Light pipe nuts", C["lp_nuts"].shape, C_BLACK, "plastic", 14, "internal", (0, 0, 246))
 
     # 8 GNSS module with ceramic patch antenna, under the lid top (seen through the window)
     gx, gy2 = P["gnss_xy"]

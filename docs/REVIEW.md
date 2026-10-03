@@ -302,7 +302,7 @@ Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions." 
 ### Documents changed
 
 - `docs/06-design-decisions.md` (PHL-DEC-001 v0.2): the nine open decisions moved to Decisions made; Open decisions now reads none; value engineering notes the light pipes and vent take the estimate about USD 2 to 3 over the target
-- `docs/decisions/0003-design-for-construction.md` (PHL-DDR-003 v0.2): A1 to A3 accepted with their fallbacks; Tables 1 and 2 still open for review (no register item asked for them)
+- `docs/decisions/0003-design-for-construction.md` (PHL-DDR-003 v0.2): A1 to A3 accepted with their fallbacks; Tables 1 and 2 stayed open for review (no register item asked for them) until Amish accepted them later on 2026-10-02 (see the next session)
 - `docs/decisions/0001-trl2-review-decisions.md` (PHL-DDR-001 v0.3): O1 (first pilot partner) decided
 - `docs/decisions/0002-recommendations-accepted.md` (PHL-DDR-002 v0.2): O1 decided; CityTwin ingest path decided
 - `docs/03-requirements.md` (PHL-REQ-001 v0.6): R13 restated (dates published only when pooled, never pass times); R14 ingest path decided; R15 notes the cost of the light pipes and vent; no status changed
@@ -325,6 +325,59 @@ Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions." 
 
 ### Points found in the review
 
-- There is no open item to accept PHL-DDR-003, yet the register lists it under Decisions made as "open for his review"; add an accept item (recommend accept).
+- There was no open item to accept PHL-DDR-003, yet the register listed it under Decisions made as "open for his review"; the recommendation was to accept. Amish accepted it later on 2026-10-02 (see the next session).
 - Item 6 is already decided on the CityTwin side (CTW-DDR-001, D11, outbound pull); decide it together with CityTwin's item 6 so the formats match.
 - Items 3 and 4 together take the estimate to about $2 to $3 over the $75 target; the register states only the vent's effect.
+
+## Session 2026-10-02: design-for-construction changes accepted
+
+Amish, 2026-10-02: "APPROVED: Design-for-construction changes in 10 repos (CityTwin, CoolShade, PalletPilot, Heliolite, PotholeLog, EarthPress, ReadyKit, CellCheck, CargoMule and ThermaCart)". This accepts the design-for-construction changes in Tables 1 and 2 of PHL-DDR-003 (P1 to P7 and their knock-on changes), which were left open for his review when the open decisions were decided earlier the same day. No other item is decided by it. trl stays 3; no build or test work was done, and the model, BOM, calculations and pictures are unchanged.
+
+### Documents changed
+
+- `docs/decisions/0003-design-for-construction.md` (PHL-DDR-003 v0.3, status Draft): status line now "accepted" with Amish's words.
+- `docs/06-design-decisions.md` (PHL-DEC-001 v0.3): Decisions made row added, dated 2026-10-02; the 2026-10-01 row no longer calls the changes open for review.
+- `docs/05-build-plan.md` (PHL-BLD-001 v0.2): section 2 says PHL-DDR-003 is accepted.
+- PDFs regenerated.
+
+### Recommended next step
+
+No change: the follow-up actions of the previous session stand. TRL 4 remains on hold by Amish's instruction.
+
+## Session 2026-10-02: approved follow-ups carried out
+
+Amish, 2026-10-02: "497 follow-up actions that need CAD, drawing, picture, BOM or calculation work ... APPROVED CHANGES, COMPLETE THESE", and "Photoreal renders are out of date in most repos ... COMPLETE THESE". This session carried the decisions of 2026-10-02 into the design. trl stays 3; no build or test work was done; `budget_usd` is unchanged. No git commands were run, by instruction.
+
+### Follow-ups (from the list of the open-decision session above)
+
+1. Done. Light pipes and LEDs in the model: `cad/src/model.py` has two 6.4 mm sealed holes in the lid (30 mm right of centre, 40 and 30 mm toward the rear), two panel-mount light pipes with inside nuts, a 5 mm LED in each and their wire pair routed under the GNSS module to the controller (BOM line 14). Checks added for the seal, nuts, pillars, GNSS, LEDs and wire clearances.
+2. Done. Breather vent in the model: a 12.2 mm hole in the front end wall on the centre line, 30 mm up, with an M12 vent and inside locknut (BOM line 15); the nut is 8.5 mm clear of the converter, 3.8 mm clear of the lid and 12.2 mm clear of the carrier. The nameplate label is modelled on the lid top (BOM line 16). 68 of 68 constructability checks pass (was 48); STEP and STL re-exported.
+3. Done. `bom/bom.csv`: lines 14 (light pipes, LEDs and lead, $1.00), 15 (breather vent, $2.00) and 16 (nameplate label, $0.50) added with a price basis each; lines 2 and 3 respecified for the new holes. `bom/bom-notes.md` updated (total, mass, basis).
+4. Done. `docs/04-calcs/sizing.py` re-run: logger 0.44 kg, 0.58 kg with lead and fixings [H2]; 22 N per M6 bolt at 20 g [H3]; plate first mode 168 Hz, unchanged [I1]; cost $77.50 [J1]. PHL-CAL-001 v0.5, PHL-REQ-001 v0.7 and PHL-DEC-001 v0.4 updated. Value-engineering target: USD 75. Estimated cost of the constructable design: USD 77.50 (USD 2.50 over the target).
+5. Done. General arrangement PHL-DWG-001 Rev P4 (vent, light pipe holes and nameplate called out; notes updated). Making sketch PHL-DWG-102 adds the front wall vent hole; new lid drilling sketch PHL-DWG-104 (P1).
+6. Done. Build plan pictures regenerated: overview (17 components), box hole layout (vent hole and front wall note), new joints 7 (light pipe in the lid) and 8 (vent in the front wall), step 1 (gland and vent), new step 7 (light pipes and nameplate onto the lid), steps 8 to 10 renumbered, wiring (status LEDs). `docs/05-build-plan.md` PHL-BLD-001 v0.3: section 1, 3.2, new 3.8 (lid drilling), 3.5.1 wiring, bought parts, steps, first checks and sources.
+7. Done. `cad/src/product_model.py` marks the clear GNSS window as a render detail only (the build lid is opaque) and takes the light pipe, vent and nameplate sizes and positions from `model.py`. Its internals were also brought to the constructable design: carrier plate on the hex standoffs, modules on nylon standoffs, IMU on two screws, status LEDs and lead.
+8. Partly done. The pooling rule is written into the server export description in PHL-PRC-001 v0.7 ("Server export: segment files and the pooling rule"): a date per segment, day only, only when at least two vehicles or at least three separate days are pooled; pass times, vehicle identifiers, tracks and speeds never exported. The three-day reading of "several days" is Proposed, awaiting Amish, to be matched with CityTwin. Agreeing the format with CityTwin's item 6 is not done here: cross-repo (see below). No server code was written (TRL 4 software).
+
+Also changed: concept media regenerated (`cad/src/concept_media.py`: hero, blueprint key figures 0.44 kg and $77.50, exploded with callouts 1 to 16, cutaway, flow, model.glb); README cost figures; PHL-PRB-001 v0.7 cost line. `python3 .kit/drawing.py --check-text` is clean.
+
+### Requirement status change
+
+- R15 (low cost): met on paper to **not met**, $77.50 against the $75 value-engineering target ($2.50 over). Counts now: 1 not met, 6 at risk, 2 not verifiable at TRL 3, 3 met on paper, 4 met by design. The register lists savings (offcut plates, a 16 GB card) that could close the gap.
+
+### Cross-repo actions
+
+- CityTwin: match its item 6 (segment file fetch and pooled-date rule) to the PotholeLog export: daily CSV and GeoJSON files fetched over HTTPS, a day-only date per segment only when at least two vehicles or at least three days are pooled, no pass times. Field names to agree.
+
+### Render scenes
+
+`cad/src/product_model.py` exported with `.kit/export_views.py` to `/home/claude/renders/potholelog` (hero, exploded, detail: one .npz and .json each, plus `potholelog__jobs.json`). Photoreal renders, `media/card.png` and `media/social-preview.png` are to be made on Amish's Mac; until then `media/render-*.png` show the concept layout and no carrier plate.
+
+### Proposed, awaiting Amish
+
+- The "several days" in the pooling rule read as three or more separate days.
+- R15 is over the target; whether to take the savings in the register or accept the overrun is Amish's call (`budget_usd` left at $75).
+
+## 2026-10-02: photoreal renders redone on the constructable design
+
+Rendered with Blender Cycles on Amish's Mac from the updated appearance model; captioned with `.kit/photo_caption.py`; `media/card.png` and `media/social-preview.png` regenerated with `.kit/cards.py`. Views: hero, exploded, detail. image_qc passes. Appearance deviations are those logged above as proposed, awaiting Amish.

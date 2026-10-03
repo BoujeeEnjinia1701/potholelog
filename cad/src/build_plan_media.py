@@ -4,7 +4,7 @@ Run from the repo root:  python cad/src/build_plan_media.py [overview|sheets|lay
 With no argument it draws everything. Every picture is drawn from cad/src/model.py
 (build_components), so the pictures and the model never disagree:
     docs/05-build-plan/overview.png        every component pulled apart, numbered in build order
-    cad/drawings/PHL-DWG-101 to 103        making sketches for the made and drilled components
+    cad/drawings/PHL-DWG-101 to 104        making sketches for the made and drilled components
     docs/05-build-plan/plate-holes.png     hole positions on the mounting plate
     docs/05-build-plan/box-holes.png       hole positions on the enclosure floor and end wall
     docs/05-build-plan/joint-NN.png        close-ups of the joints that need explaining
@@ -24,7 +24,7 @@ from model import PARAMS as P, build_components, derived, zcyl, zhex, box, corne
 
 OUT = ROOT / "docs" / "05-build-plan"
 DWG = ROOT / "cad" / "drawings"
-DATE = "2026-10-01"
+DATE = "2026-10-02"
 REPO = "github.com/BoujeeEnjinia1701/potholelog"
 D = derived(P)
 C = build_components(P)
@@ -33,7 +33,8 @@ S = lambda *ks: _fuse([C[k].shape for k in ks])  # noqa: E731
 COL = {"plate": "#A8A29E", "base": "#4B5563", "lid": "#14B8A6", "gland": "#1F2937", "lead": "#374151",
        "standoffs": "#B45309", "imu": "#C2410C", "carrier": "#94A3B8", "mstand": "#E5E7EB", "conv": "#2563EB",
        "cap": "#7C3AED", "ctrl": "#065F46", "sd": "#DC2626", "gnss": "#D4A017", "tape": "#F9FAFB",
-       "screw": "#111827", "bolt": "#6B7280", "board": "#D6C7A1"}
+       "screw": "#111827", "bolt": "#6B7280", "board": "#D6C7A1", "vent": "#64748B", "status": "#059669",
+       "label": "#0F766E"}
 
 
 def part(name, shape, color, explode=(0, 0, 0), alpha=1.0):
@@ -78,6 +79,7 @@ def made():
         "plate": part("Mounting plate", C["plate"].shape, COL["plate"]),
         "base": part("Enclosure base, drilled", C["base"].shape, COL["base"]),
         "gland": part("Cable gland and locknut", C["gland"].shape, COL["gland"]),
+        "vent": part("Breather vent and locknut", C["vent"].shape, COL["vent"]),
         "standoffs": part("Hex standoffs M4 (4)", C["standoffs"].shape, COL["standoffs"]),
         "imu": part("IMU and two M3 screws", S("imu", "imu_screws"), COL["imu"]),
         "carrier": part("Carrier plate and its M4 screws", S("carrier", "carrier_screws"), COL["carrier"]),
@@ -87,12 +89,15 @@ def made():
         "ctrl": part("Controller with microSD card", S("controller", "sd"), COL["ctrl"]),
         "lead": part("Fused lead", C["lead"].shape, COL["lead"]),
         "gnss": part("GNSS module and foam tape", S("gnss", "tape"), COL["gnss"]),
+        "status": part("Light pipes, LEDs and their lead", S("light_pipes", "lp_nuts", "leds", "led_wires"), COL["status"]),
+        "label": part("Nameplate label", C["label"].shape, COL["label"]),
         "lid": part("Lid and four lid screws", S("lid", "lid_screws"), COL["lid"]),
         "bolts": part("M6 bolts and washers (4)", C["fixings"].shape, COL["bolt"]),
     }
 
 
-ORDER = ["plate", "base", "gland", "standoffs", "imu", "carrier", "mstand", "conv", "cap", "ctrl", "lead", "gnss", "lid", "bolts"]
+ORDER = ["plate", "base", "gland", "vent", "standoffs", "imu", "carrier", "mstand", "conv", "cap", "ctrl", "lead", "status", "label",
+         "gnss", "lid", "bolts"]
 
 
 # ----------------------------------------------------------------- overview
@@ -101,7 +106,8 @@ def overview():
     off = {"plate": (0, 0, 0), "base": (0, 0, 70), "gland": (-110, 0, 70), "standoffs": (0, 0, 150),
            "imu": (0, 0, 175), "carrier": (0, 0, 205), "mstand": (0, 0, 230), "conv": (60, 0, 260),
            "cap": (50, -70, 240), "ctrl": (-50, 0, 285), "lead": (-150, 0, 40), "gnss": (0, 0, 330),
-           "lid": (0, 0, 410), "bolts": (0, 0, 35)}
+           "lid": (0, 0, 410), "bolts": (0, 0, 35), "vent": (90, 0, 70), "status": (0, -40, 470),
+           "label": (0, 0, 455)}
     parts = []
     for k in ORDER:
         p = M[k]
@@ -146,12 +152,31 @@ def sheets():
                "  them through the plate's holes with the box clamped on it.",
                "Rear end wall: one 16.2 mm hole for the M16 gland, 10 mm left",
                "  of centre, its centre 20 mm up from the box's underside.",
+               "Front end wall: one 12.2 mm hole for the M12 breather vent,",
+               "  on the centre line, its centre 30 mm up from the underside.",
                "Tape the faces, pilot 3 mm at low speed with wood behind, open",
                "  out with a step drill. No solvents: polycarbonate crazes.",
                "Fit: the floor sits flat on the plate; a ring of neutral-cure",
                "  silicone round each floor hole underneath seals it.",
                "Check: no crack runs from any hole under a bright lamp."],
         inset_view=(30, -130), **base))
+    (lx0, ly0), (lx1, _) = P["light_pipe_xy"]
+    out.append(bv.component_sheet(
+        Part("Enclosure lid", C["lid"].shape, COL["lid"]), [M["status"], M["label"], M["gnss"]],
+        dwg_no="PHL-DWG-104", title="PotholeLog enclosure lid: drilling sketch", material="Lid of the bought IP65 box (opaque)",
+        notes=["Lid of the bought box, opaque, with its gasket and corner pillars.",
+               f"Two {P['light_pipe'][0]:g} mm holes for the sealed light pipes, measured",
+               f"  from the lid's centre: {abs(lx0):g} and {abs(lx1):g} mm toward the rear (gland)",
+               f"  end, both {abs(ly0):g} mm to the right of the long centre line.",
+               "  Rear hole: power light; front hole: logging light.",
+               "Tape the top, pilot 3 mm with wood behind, open out with a",
+               "  step drill; check the size against the light pipe's datasheet.",
+               "Keep 25 mm round the GNSS module's patch free of labels and metal.",
+               f"Nameplate label {P['label'][0]:g} x {P['label'][1]:g} mm, centred {P['label_xy'][0]:g} mm forward,",
+               "  arrow pointing forward, on the cleaned lid top.",
+               "Fit: each pipe's O-ring under its flange outside, nut inside.",
+               "Check: no crack from either hole; the nuts clear the pillars."],
+        inset_view=(35, -55), **base))
     out.append(bv.component_sheet(
         Part("Module carrier plate", C["carrier"].shape, COL["carrier"]), [M["base"], M["standoffs"], M["imu"], M["plate"]],
         dwg_no="PHL-DWG-103", title="PotholeLog module carrier plate: making sketch", material="Aluminium sheet 1.5 mm, 5052",
@@ -247,13 +272,15 @@ def layouts():
     ax.text(0, iy - 5, f"3.5 at {-dx:g} and {dx:+g}, {iy:+g}", ha="center", va="top", fontsize=7.5, color=INK,
             bbox=dict(boxstyle="round,pad=0.15", fc="#F3F4F6", ec="none"))
     ax.add_patch(Rectangle((-bl / 2 - 3, gy - 8), 3, 16, fc=COL["gland"], ec="none"))
+    ax.add_patch(Rectangle((bl / 2, P["vent_yz"][0] - P["vent"][0] / 2), 3, P["vent"][0], fc=COL["vent"], ec="none"))
+    ax.text(bl / 2 + 4, P["vent_yz"][0] + 8, "vent hole\n(end wall)", ha="left", va="bottom", fontsize=7, color=MUT)
     ax.text(-bl / 2 - 4, gy + 10, "gland hole\n(end wall)", ha="right", va="bottom", fontsize=7, color=MUT)
     ax.annotate("", xy=(bl / 2 + 2, -bw / 2 - 7), xytext=(bl / 2 - 24, -bw / 2 - 7), arrowprops=dict(arrowstyle="-|>", color=AC))
     ax.text(bl / 2 - 26, -bw / 2 - 7, "front", ha="right", va="center", fontsize=8, color=AC)
-    ax.set_xlim(-bl / 2 - 22, bl / 2 + 6); ax.set_ylim(-bw / 2 - 12, bw / 2 + 6)
+    ax.set_xlim(-bl / 2 - 22, bl / 2 + 22); ax.set_ylim(-bw / 2 - 12, bw / 2 + 6)
     ax.text(-bl / 2, bw / 2 + 3, "Floor, seen from inside (from above). x along, y across (+ is left), mm from the centre",
             fontsize=8, color=MUT, va="bottom")
-    ax2 = fig.add_axes([0.63, 0.2, 0.34, 0.55]); ax2.set_aspect("equal"); ax2.set_axis_off()
+    ax2 = fig.add_axes([0.63, 0.27, 0.34, 0.55]); ax2.set_aspect("equal"); ax2.set_axis_off()
     hb = P["base_h"]
     ax2.add_patch(Rectangle((-bw / 2, 0), bw, hb, fc="#F3F4F6", ec=INK, lw=1.2))
     ax2.plot([0, 0], [-2, hb + 2], color=MUT, lw=0.5, ls=(0, (8, 3, 2, 3)))
@@ -267,6 +294,11 @@ def layouts():
     ax2.text(0, -4, "Rear end wall, seen from outside. 16.2 mm hole for the M16 gland;\ndashed: the gland's outside flange. Up from the box's underside.",
              ha="center", va="top", fontsize=7.5, color=MUT)
     ax2.set_xlim(-bw / 2 - 4, bw / 2 + 4); ax2.set_ylim(-14, hb + 10)
+    # front end wall, seen from outside: left of the vehicle (+Y) is on the left
+    vy, vz = P["vent_yz"]
+    ax3 = fig.add_axes([0.63, 0.02, 0.34, 0.2]); ax3.set_axis_off()
+    ax3.text(0.0, 0.95, f"Front end wall, seen from outside: one {P['vent'][0]:g} mm hole for the M12 breather vent,", fontsize=7.5, color=MUT, va="top", transform=ax3.transAxes)
+    ax3.text(0.0, 0.72, f"on the centre line ({vy:g} across), its centre {vz:g} mm up from the box's underside.", fontsize=7.5, color=MUT, va="top", transform=ax3.transAxes)
     fig.text(0.03, 0.965, "Enclosure base: drilling layout", fontsize=13, fontweight="bold", color=INK, va="top")
     fig.text(0.03, 0.925, "Drill the floor holes through the plate's holes with the box clamped on the plate, so they line up; then open them to size.",
              fontsize=8.5, color=MUT, va="top")
@@ -349,6 +381,30 @@ def joints():
         OUT / "joint-06.png", "Joint 6: M6 corner bolt beside the box (cut through the bolt)",
         subtitle="4 mm between washer and box wall: use a ring spanner on the head, nyloc nut underneath",
         elev=10, azim=-80, size=(8, 6)))
+    # 07 light pipe in the lid, cut on its axis
+    lx, ly = P["light_pipe_xy"][0]
+    b_ = (lx - 7, lx + 5.5, ly - 12, ly, 36, 62)
+    out.append(bv.joint([
+        part("Lid top", win(C["lid"].shape, *b_), COL["lid"]),
+        part("Light pipe, flange and O-ring outside", win(C["light_pipes"].shape, *b_), COL["status"]),
+        part("Nut inside the lid", win(C["lp_nuts"].shape, *b_), COL["screw"]),
+        part("5 mm LED in the pipe's socket", win(C["leds"].shape, *b_), "#FBBF24"),
+        part("LED lead to the controller", win(C["led_wires"].shape, *b_), "#B91C1C")],
+        OUT / "joint-07.png", "Joint 7: status light pipe in the lid (cut on its axis)",
+        subtitle="Sealed under its flange outside, nut inside; the LED plugs into the back of the pipe",
+        elev=14, azim=70, size=(8, 6)))
+    # 08 breather vent in the front end wall, cut on its axis
+    vy, vz = P["vent_yz"]
+    bl = P["box"][0]
+    b_ = (bl / 2 - 16, bl / 2 + 12, vy - 16, vy, 2, 46)
+    out.append(bv.joint([
+        part("Box front end wall (light grey)", win(C["base"].shape, *b_), "#CBD5E1"),
+        part("Breather vent (dark): cap outside, nut inside", win(C["vent"].shape, *b_), COL["vent"]),
+        part("DC-DC converter (nearest module)", win(C["converter"].shape, *b_), COL["conv"]),
+        part("Carrier plate", win(C["carrier"].shape, *b_), COL["carrier"])],
+        OUT / "joint-08.png", "Joint 8: breather vent in the front end wall (cut on its axis)",
+        subtitle=f"Cap and O-ring outside, locknut inside; the nut stays 8.5 mm clear of the converter. Centre {vz:g} mm up",
+        elev=10, azim=-82, size=(8, 6)))
     return out
 
 
@@ -363,14 +419,14 @@ def steps():
     def mv(p, e):
         return Part(p.name, p.shape, p.color, None, tuple(e), p.alpha)
 
-    st(1, [M["base"]], [mv(M["gland"], (-70, 0, 0))], "cable gland into the rear end wall",
-       "Seal outside, locknut inside, maker's torque. Leave the dome nut loose for now",
-       elev=22, azim=-140, label_done=True)
-    st(2, [M["plate"]], [mv(part("Enclosure base with gland", S("base", "gland"), COL["base"]), (0, 0, 70)),
+    st(1, [M["base"]], [mv(M["gland"], (-70, 0, 0)), mv(M["vent"], (60, 0, 0))], "cable gland and breather vent into the end walls",
+       "Gland in the rear wall, vent in the front wall: seals outside, locknuts inside. Leave the gland's dome nut loose for now",
+       elev=22, azim=-120, label_done=True)
+    st(2, [M["plate"]], [mv(part("Enclosure base with gland and vent", S("base", "gland", "vent"), COL["base"]), (0, 0, 70)),
                          mv(M["standoffs"], (0, 0, 150))], "box onto the plate with four hex standoffs",
        "Silicone ring round each floor hole underneath; standoffs through the floor into the plate, firm by hand plus a quarter turn",
        elev=28, azim=-55, label_done=True)
-    done2 = [M["plate"], part("Enclosure base", S("base", "gland", "standoffs"), COL["base"])]
+    done2 = [M["plate"], part("Enclosure base", S("base", "gland", "vent", "standoffs"), COL["base"])]
     st(3, done2, [mv(M["imu"], (0, 0, 70))], "IMU onto the box floor",
        "Arrow on the board pointing forward; two M3 x 8 screws through the floor into the plate, snug",
        elev=45, azim=-55, label_done=False)
@@ -388,16 +444,23 @@ def steps():
     st(6, done3 + [inside], [mv(M["lead"], (-90, 0, 0))], "fused lead through the gland and wired",
        "Through the gland to the converter's input terminals; tighten the dome nut on the lead",
        elev=28, azim=-140, label_done=False)
-    lid_flip = part("Lid, upside down", S("lid", "lid_screws"), COL["lid"])
-    st(7, [lid_flip], [mv(part("GNSS module on its foam tape", S("gnss", "tape"), COL["gnss"]), (0, 0, -45))],
+    st(7, [part("Lid", S("lid", "lid_screws"), COL["lid"])],
+       [mv(part("Light pipes", C["light_pipes"].shape, COL["status"]), (0, 0, 35)),
+        mv(part("Nuts and LEDs, from inside", S("lp_nuts", "leds"), COL["screw"]), (0, 0, -35)),
+        mv(M["label"], (0, 0, 25))],
+       "light pipes and nameplate onto the lid",
+       "Pipes in from outside, O-rings under the flanges, nuts inside; LEDs into the pipes' sockets; label arrow forward",
+       elev=30, azim=-55, label_done=True)
+    lid_flip = part("Lid with light pipes, upside down", S("lid", "lid_screws", "light_pipes", "lp_nuts", "leds", "label"), COL["lid"])
+    st(8, [lid_flip], [mv(part("GNSS module on its foam tape", S("gnss", "tape"), COL["gnss"]), (0, 0, -45))],
        "GNSS module under the lid", "Seen from below. Clean the lid with isopropyl alcohol; press the module on for 30 s, antenna toward the lid",
        elev=-40, azim=-55, label_done=True)
     done7 = done3 + [inside, M["lead"]]
-    st(8, done7, [mv(part("Lid with the GNSS module under it", S("lid", "lid_screws", "gnss", "tape"), COL["lid"]), (0, 0, 70))], "close the lid",
-       "Plug the GNSS lead into the controller; gasket clean, no wire across it; four lid screws in a cross pattern",
+    st(9, done7, [mv(part("Lid with light pipes, LEDs and GNSS module", S("lid", "lid_screws", "gnss", "tape", "light_pipes", "lp_nuts", "leds", "led_wires", "label"), COL["lid"]), (0, 0, 70))], "close the lid",
+       "Plug the GNSS and light pipe leads into the controller; gasket clean, no wire across it; four lid screws in a cross pattern",
        elev=25, azim=-55, label_done=False)
-    closed = done7 + [M["lid"]]
-    st(9, closed, [mv(part("M6 bolts and washers, from above", C["fixings"].shape + m6_shanks(), COL["bolt"]), (0, 0, 60)),
+    closed = done7 + [part("Lid", S("lid", "light_pipes", "label"), COL["lid"])]
+    st(10, closed, [mv(part("M6 bolts and washers, from above", C["fixings"].shape + m6_shanks(), COL["bolt"]), (0, 0, 60)),
                    mv(part("Washers and nyloc nuts, from below", m6_nuts(), COL["screw"]), (0, 0, -45))],
        "onto the bench board for the first checks",
        "Four M6 bolts through plate and board, nyloc nuts underneath; ring spanner on the heads",
@@ -443,6 +506,7 @@ def wiring():
     blk(99, 44, 16, 11, "GNSS module", "under the lid;\nplug-in lead", "#D4A017")
     blk(99, 24, 16, 13, "IMU breakout", "on the box floor,\nunder the carrier\nwindow", "#C2410C")
     blk(28, 18, 18, 11, "Supply sense", "two resistors,\n10 k and 20 k", "#6B7280")
+    blk(99, 13, 16, 8.5, "Status LEDs (2)", "in the lid's light pipes", "#059669")
     # power path
     wire([(17, 47.5), (30, 47.5)], RED); lab(17.8, 52.6, "2 m lead, 0.75 mm²,\nthrough the gland", RED)
     wire([(17, 43), (30, 43)], BLK); lab(17.8, 41, "ground core", BLK)
@@ -455,6 +519,7 @@ def wiring():
     # signals
     wire([(92, 50), (99, 50)], BLU); lab(95.5, 57.3, "3.3 V, GND, TX, RX,\nPPS; 0.25 mm²", BLU, "center")
     wire([(92, 40), (95, 40), (95, 30.5), (99, 30.5)], BLU); lab(94.4, 32.5, "I2C, 3.3 V,\nGND; 0.25 mm²", BLU, "right")
+    wire([(88, 36), (88, 17), (99, 17)], BLU); lab(93.5, 20, "2 outputs,\nGND; 0.25 mm²", BLU, "center")
     ax.text(27, 9.6, "Safety: wire the lead with the vehicle battery isolated, or to a bench supply with a 2 A fuse. Do not short the supercapacitor's terminals.",
             fontsize=7.6, color="#B45309", fontweight="bold")
     ax.text(27, 6.2, "Red: power. Black: ground. Blue: signal. Grey: sensing. The controller starts a clean shutdown when the supply sense stays low for about 2 s.",
