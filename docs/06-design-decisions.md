@@ -3,9 +3,9 @@ doc_id: PHL-DEC-001
 title: PotholeLog design decisions register
 project: PotholeLog
 doc_type: Design decisions register
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-10-02'
+date: '2026-10-03'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,6 +25,10 @@ revisions:
     date: '2026-10-02'
     author: Amish Chadha
     change: "Value engineering: the light pipes and LEDs, breather vent and nameplate label are now BOM lines 14 to 16; estimate USD 77.50, USD 2.50 over the target"
+  - version: "0.5"
+    date: '2026-10-03'
+    author: Amish Chadha
+    change: "Amish accepted the cost overrun against the value-engineering target on 2026-10-03; row added to decisions made; value engineering section updated"
 ---
 
 # PotholeLog design decisions register
@@ -51,6 +55,8 @@ None. All open decisions were decided on 2026-10-02.
 
 Value-engineering target: USD 75 (a hypothetical control target, not a limit). Estimated cost of the constructable design: USD 77.50 (USD 2.50 over the target). Main cost drivers and savings worth trying:
 
+Amish accepted this overrun on 2026-10-03: the estimated cost of USD 77.50 against the USD 75 target (USD 2.50 over), accepting the USD 2.50 overrun on R15. Amish: "Cost over target - i accept all the cost variations and overruns". It stays reported against the target as an accepted overrun, and the savings below remain worth trying.
+
 - The largest lines are the GNSS module (USD 15), the controller (USD 10), the 60 V converter with its protection (USD 9) and the enclosure (USD 8); the plate, IMU and memory card are USD 6 each.
 - Making the design constructable added the carrier plate (USD 2.00) and the box fixing kit (USD 1.50) and moved USD 0.50 of hardware out of line 11: from USD 71.00 to USD 74.00.
 - Adopted on 2026-10-02 and now in the BOM: the two status light pipes with their LEDs and lead (line 14, USD 1.00), the breather vent (line 15, USD 2.00) and the nameplate label (line 16, USD 0.50). Together they take the estimate from USD 74.00 to USD 77.50, USD 2.50 over the target.
@@ -74,3 +80,4 @@ Value-engineering target: USD 75 (a hypothetical control target, not a limit). E
 | 2026-10-02 | GNSS module held by acrylic foam tape (option a), with adhesion checked after the TRL 4 heat soak; the printed clip is the fallback if the tape lets go | Amish: "i approve your recommendations for all 555 open decisions." | PHL-DDR-003, A2 |
 | 2026-10-02 | Keep the 160 mm plate and bolt the logger down as a unit with a ring spanner for the prototype (option a); review after a TRL 4 trial fitting | Amish: "i approve your recommendations for all 555 open decisions." | PHL-DDR-003, A3; PHL-CAL-001 [I4] |
 | 2026-10-02 | Design for construction accepted: the changes in Tables 1 and 2 (P1 to P7 and their knock-on changes), as made | Amish: "APPROVED: Design-for-construction changes in 10 repos (CityTwin, CoolShade, PalletPilot, Heliolite, PotholeLog, EarthPress, ReadyKit, CellCheck, CargoMule and ThermaCart)" | [PHL-DDR-003](decisions/0003-design-for-construction.md), Tables 1 and 2 |
+| 2026-10-03 | Cost overrun accepted: the estimated cost of USD 77.50 against the USD 75 target (USD 2.50 over), accepting the USD 2.50 overrun on R15 | Amish: "Cost over target - i accept all the cost variations and overruns" | [REVIEW.md](REVIEW.md), session 2026-10-03 |
